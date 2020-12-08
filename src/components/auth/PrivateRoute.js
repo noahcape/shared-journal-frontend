@@ -29,7 +29,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
             ) : (
                     <Redirect to="/home" />
                 )
-        )} /> : <div>Something went wrong</div>
+        )} /> : <Redirect to= "/" />
     )
 }
 

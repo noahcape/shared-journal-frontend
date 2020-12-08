@@ -20,7 +20,7 @@ export default function PostEditHandler(props) {
         getPost()
 
         return () => {isCancelled = true}
-    }, [isEditState, props.post._id])
+    })
 
     const changeEditState = () => {
         setIsEditState(!isEditState)

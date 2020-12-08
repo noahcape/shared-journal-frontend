@@ -76,7 +76,7 @@ const PublicView = (props) => {
     return (
         <div>
             <div className="public-view-header-n-options">
-                <h1>{props.match.params.journalName.replace("_", " ")}</h1>
+                <h1>{props.match.params && props.match.params.journalName.replace("_", " ")}</h1>
                 <span className="public-view-options">
                     See posts from
                     <select onChange={(e) => handleChange(e)}>

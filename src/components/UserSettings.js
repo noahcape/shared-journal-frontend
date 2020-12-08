@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react"
 import axios from "axios"
 import AddRecipient from "./AddRecipient"
 import ErrorNotice from "./misc/ErrorNotice"
+require("dotenv").config()
 
 export default function UserSettings() {
     const [settings, setSettings] = useState()
@@ -15,7 +16,7 @@ export default function UserSettings() {
 
         const getSettings = async () => {
             const res = await axios({
-                url: "http://localhost:5000/settings/get",
+                url: `http://${process.env.REACT_APP_SERVER}/settings/get`,
                 method: "get",
                 headers: { "x-auth-token": localStorage.getItem("auth-token") }
 
@@ -38,7 +39,7 @@ export default function UserSettings() {
         e.preventDefault();
 
         await axios({
-            url: "http://localhost:5000/settings/delete_recipient",
+            url: `http://${process.env.REACT_APP_SERVER}/settings/delete_recipient`,
             method: "delete",
             headers: { "x-auth-token": localStorage.getItem("auth-token") },
             data: {
@@ -57,7 +58,7 @@ export default function UserSettings() {
 
         try {
             await axios({
-                url: `http://localhost:5000/settings/edit_name?journalName=${journalName}`,
+                url: `http://${process.env.REACT_APP_SERVER}/settings/edit_name?journalName=${journalName}`,
                 method: "PUT",
                 headers: { "x-auth-token": localStorage.getItem("auth-token") }
             })

@@ -40,7 +40,7 @@ export default function Home() {
             isCancelled = true;
         };
 
-    }, [month, year]);
+    });
 
     const renderDateOptions = () => {
         return dateOptions && Object.keys(dateOptions).map((year, index) => {
@@ -92,9 +92,9 @@ export default function Home() {
                             </select>
                         </span>
 
-                        <Link to={`/visitor/${userData.user.journalName.replace(" ", "_")}`}>
+                        {userData.user && <Link to={`/visitor/${userData.user.journalName.replace(" ", "_")}`}>
                             <span className="view-journal-as-visitor-button">View Journal as a visitor</span>
-                        </Link>
+                        </Link>}
                     </div>
 
                     <div className="home-post-title">{!year ? (<h1>All Posts</h1>) : (<h1>{`Posts from ${months[month]} ${year}`}</h1>)}</div>
