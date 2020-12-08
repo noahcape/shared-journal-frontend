@@ -1,0 +1,45 @@
+/* rgb(47, 88, 183)
+rgb(129, 139, 249)
+rgb(158, 166, 247) */
+
+.public-view-header-n-options {
+    padding: 15px;
+    color: white;
+    border-radius: 8px;
+    height: 71px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: rgb(47, 88, 183);
+}
+
+.public-view-header-n-options h1 {
+    margin: 0;
+    padding: 0;
+}
+
+.public-view-options {
+    border-radius: 8px;
+    background-color: rgb(129, 139, 249);
+    padding: 10px;
+}
+
+.public-view-options select {
+    margin-left: 5px;
+    color: white;
+    border: 3px solid white;
+    background-color: rgb(129, 139, 249);
+}
+
+.public-view-options select:hover {
+    background-color: rgb(158, 166, 247) ;
+}
+
+.public-view-post-header {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+

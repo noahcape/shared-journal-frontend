@@ -1,0 +1,721 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+p, span {
+    font-size: medium;
+    line-height: 1.45rem;
+}
+
+a {
+    text-decoration: unset;
+}
+
+button, input[type="submit"] {
+    border: none;
+    background: none;
+    color: unset;
+    cursor: pointer;
+    outline: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    padding-bottom: 0.2rem;
+    padding-top: 0.5rem;
+}
+
+img {
+    max-width: 200px;
+    max-height: 250px;
+    width: auto;
+    height: auto;
+}
+
+textarea[type="textarea"] {
+    resize: none;
+    padding: 5px;
+    border-radius: 8px;
+    width: 450px; 
+    height: 185px;
+    margin: 25px;
+}
+
+select {
+    border: 1px solid black;
+    border-radius: 8px;
+    height: 25px;
+    cursor: pointer;
+}
+
+select:focus {
+    outline: none
+}
+
+.user-options {
+    align-items: center;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 8px;
+    color: white;
+    background-color: rgb(47, 88, 183);
+    display: flex;
+    justify-content: space-between;
+}
+
+.user-options select {
+    margin-left: 5px;
+    color: white;
+    border: 3px solid white;
+    background-color: rgb(129, 139, 249);
+}
+
+.user-options select:hover {
+    background-color: rgb(158, 166, 247);
+}
+
+.user-options span {
+    color: white;
+    padding: 8px;
+    border-radius: 8px;
+    background-color: rgb(129, 139, 249);
+}
+
+.view-journal-as-visitor-button:hover {
+    background-color: rgb(158, 166, 247);
+}
+
+.home-post-title {
+    padding: 15px;
+    margin: 8px;
+    display: flex;
+    justify-content: center;
+}
+
+.post-text {
+    white-space: pre-wrap;
+    padding-left: 15px;
+}
+
+.fill {
+    /* margin: 5px; */
+    padding: 10px;
+    width: 280px; 
+    height: 240px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1.5px solid black;
+    border-radius: 8px;
+}
+
+.edit-fill {
+    padding: 10px;
+    width: 250px;
+    height: 240px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1.5px solid black;
+    border-radius: 8px;
+}
+
+.fill img,
+.edit-fill img {
+    float: none;
+    margin: 0;
+    padding: 5px;
+    max-width: 220px;
+    max-height: 210px;
+    height: auto;
+    width: auto;
+}
+
+.grid-item  {
+    margin: 0;
+}
+
+.image-preview-controls {
+    display: flex;
+    justify-content: space-between;
+}
+
+.image-preview-control {
+    display: flex;
+    justify-content: center;
+}
+
+input[type="file"] {
+    padding: 100px;
+    border: 1.5px solid black;
+    border-radius: 8px;
+    width: 280px; 
+    height: 240px;
+    overflow: hidden;
+    color: transparent;
+}
+
+input[type="file"]:focus {
+    outline: none;
+}
+
+.page {
+    margin: 0 auto;
+    padding: 1rem;
+    max-width: 600px;
+}
+
+.container {
+    margin: 0 auto;
+    max-width: 900px;
+}
+
+/* nav bar */
+
+#header {
+    height: 50px;
+    align-items: center;
+    justify-content: space-between;
+    background-color: rgb(47, 88, 183);
+    display: flex;
+    margin-bottom: 20px;
+}
+
+#header .title {
+    margin: 0;
+    padding: 0 1rem;
+    color: #ffff;
+}
+
+#header .auth-options {
+    display: flex;
+    height: 100%;
+}
+
+#header .auth-options button {
+    padding: 0 1rem;
+    color: #ffff;
+    font-size: 1.1rem;
+    background-color: rgb(129, 139, 249);
+}
+
+#header .auth-options button:hover {
+    background-color: rgb(158, 166, 247);
+}
+
+/* log in and register form and page */
+
+.form {
+    margin: 0 auto;
+}
+
+.form label,
+.form input {
+    display: block;
+
+}
+
+.form label {
+    margin-bottom: 0.2rem;;
+}
+
+.form input {
+    margin-bottom: 1rem;
+}
+
+.form input[type="email"],
+.form input[type="password"] {
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.3rem;
+    border: 1px solid rgb(210, 210, 210);
+    border-radius: 8px;
+} 
+
+.form .journal-display-name {
+    font-size: 1rem;
+    padding: 0.3rem;
+    border: 1px solid rgb(210, 210, 210);
+    border-radius: 8px;
+    width: 85%;
+    margin-right: 5px;
+}
+
+.form .journal-name-span {
+    margin: 0;
+    display: flex;
+    font-size: large;
+}
+
+.form input:focus {
+    outline: none;
+    border: 1px solid rgb(30, 115, 242);
+}
+
+.form input[type="submit"] {
+    background-color: rgb(107, 173, 254);
+    padding: 0.3rem 0.3rem;
+    border-radius: 8px;
+}
+
+/* error notice */
+
+.error-notice {
+    border: 1px solid rgb(255, 110, 110);
+    background-color: rgb(252, 167, 167);
+    padding: 0.5rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.error-notice button {
+    background-color: rgb(247, 103, 103);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    color: #ffff;
+}
+
+.loading-message {
+    text-align: center;
+    padding-bottom: 15px;
+}
+
+.post {
+    align-items: baseline;
+    border: 1px black solid;
+    display: flex;
+}
+
+.post button {
+    border: 1px black solid;
+    padding: 10px 4px;
+    margin: 8px;
+}
+
+.post img {
+    display: inline;
+    padding: 5px;
+    /* border: 5px solid rgb(180, 199, 255); */
+    border-radius: 10px;
+    max-width: 85%;
+    max-height: 165px;
+}
+
+.post .fill {
+    width: 250px; 
+    height: 175px;
+}
+
+.image {
+    display: flex;
+    border: 1px solid black;
+    border-radius: 8px;
+    float: left;
+    margin-bottom: 5px;
+    margin-right: 5px;
+    margin-left: 15px;
+    margin-right: 15px;
+}
+ 
+.image .backButton {
+    align-self: flex-end;
+    padding-left: 5px;
+    float: left;
+}
+
+.image .forwardButton {
+    align-self: flex-end;
+    padding-right: 5px;
+    float: left;
+}
+
+/* set up grid */
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    row-gap: 20px;
+    padding: 25px;
+    border-radius: 12px;
+}
+
+.grid-item {
+    display: grid;
+    grid-template-columns: 1fr 50px 50px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid black;
+}
+
+.grid-item img {
+    margin: 8px 8px;
+}
+
+.grid-item .post-info {
+    margin-left: 5px;
+    display: block;
+}
+
+.grid-item button {
+    align-self: end;
+}
+
+.grid-item .post-read-edit-button {
+    background-color: rgb(157, 157, 247);
+    color: white;
+    border-radius: 8px;
+    padding: 4px 6px;
+    height: 30px;
+    width: 40px;
+}
+
+.grid-item .post-read-delete-button {
+    background-color: rgb(247, 157, 157);
+    color: white;
+    border-radius: 8px;
+    padding: 4px 6px;
+    height: 30px;
+    width: 60px;
+}
+
+.form-grid {
+    margin: 25px;
+    display: grid;
+    grid-template-columns: 0.7fr 1fr 50px;
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+}
+
+.form-grid textarea[type="textarea"] {
+    resize: none;
+    width: 450px; 
+    height: 185px;
+    margin: 25px;
+}
+
+.form-grid input[type="submit"] {
+    background-color: rgb(157, 157, 247);
+    color: white;
+    border-radius: 8px;
+    padding: 4px 6px;
+    height: 30px;
+    width: 60px;
+    align-self: end;
+}
+
+.post-edit-grid-no-images {
+    display: grid;
+    grid-template-columns: 1fr;
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+    border-bottom: 1px black solid;
+}
+
+.post-edit-grid-no-images textarea {
+    width: 700px;
+}
+
+.post-edit-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+    border-bottom: 1px black solid;
+}
+
+.post-edit-image-and-text {
+    display: flex;
+}
+
+.post-edit-grid button,
+.post-edit-grid-no-images button {
+    margin: 5px;
+    float: right;
+}
+
+.post-edit-submit-button {
+    background-color: rgb(157, 157, 247);
+    color: white;
+    border-radius: 8px;
+    padding: 4px 6px;
+    margin-right: 10px;
+    height: 30px;
+    width: 55px;
+}
+
+.post-edit-cancel-button {
+    background-color: rgb(247, 157, 157);
+    color: white;
+    border-radius: 8px;
+    margin-left: 5px;
+    padding: 4px 6px;
+    height: 30px;
+    width: 60px;
+}
+
+.recipient {
+    margin: 5px 5px 5px 5px;
+    border: 1px solid black;
+    border-radius: 8px;
+    padding: 4px 8px;
+    display: inline-block;
+    background-color: rgb(245, 245, 245)
+}
+
+.recipient button {
+    color: rgb(255, 110, 110);
+    border-radius: 100%;
+    margin-left: 5px;
+    margin-right: 5px;
+    padding: 1px;
+    align-items: center;
+}
+
+.recipient-container {
+    padding: 2px;
+    border: 1px black solid;
+    border-radius: 8px;
+    width: 650px;
+    height: 300px;
+    overflow-y:auto;
+    margin-bottom: 15px;
+}
+
+.add-recipient-button {
+    background-color: rgb(3, 228, 56);
+    border: 1px solid rgb(0, 218, 25);
+    border-radius: 50%;
+    margin: 5px;
+    padding-top: 0.25rem;
+    padding-bottom: 0.35rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+.new-recipient-form {
+    margin: 5px;
+}
+
+.new-recipient-form input[type="email"] {
+    border: 1.5px solid;
+    outline: none;
+    border-radius: 6px;
+    width: 250px;
+    height: 25px;
+    padding: 5px;
+}
+
+.new-recipient-form input[type="submit"] {
+    margin-top: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
+    background-color: rgb(3, 228, 56);
+    border: 1px solid rgb(0, 218, 25);
+    border-radius: 50%;
+    padding-top: 0.25rem;
+    padding-bottom: 0.35rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+.cancel-recipient-button {
+    background-color: rgb(252, 122, 122);
+    border: 1px solid red;
+    color: white;
+    margin: 5px;
+    border-radius: 50%;
+    padding-top: 0.25rem;
+    padding-bottom: 0.35rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+.user-settings-journal-name-edit {
+    display: flex;
+    align-items: center;
+}
+
+.user-settings-journal-name-edit button,
+.user-settings-journal-name-read button  {
+    margin: 5px;
+    color: white;
+    font-size: smaller;
+    padding: 4px 4px;
+    border-radius: 8px;
+    background-color: rgb(129, 139, 249);
+}
+
+.user-settings-journal-name-edit button:hover,
+.user-settings-journal-name-read button:hover {
+    background-color: rgb(158, 166, 247);
+}
+
+.user-settings-journal-name-edit input {
+    margin-right: 25px;
+    padding: 5px;
+    border: none;
+    border-bottom: 1px solid black;
+    outline: none;
+}
+
+.user-settings-journal-name-read {
+    display: flex;
+    align-items: center;
+}
+
+.user-settings-journal-name-read p {
+    margin: 0;
+    margin-right: 25px;
+}
+
+.image-scroll-active {
+    cursor: zoom-in;
+    position: relative;
+    opacity: 1;
+}
+
+.image-scroll {
+    position: fixed;
+    opacity: 0;
+}
+
+.zoom-image-scroll {
+    position: fixed;
+    opacity: 0;
+}
+
+.zoom-image-scroll-active {
+    cursor: zoom-out;
+    position: relative;
+    opacity: 1;
+    max-width: 665px;
+    max-height: 600px;
+    width: auto;
+    height: auto;
+}
+
+.zoom-image {
+    cursor: zoom-out;
+}
+
+.non-zoom-image {
+    cursor: zoom-in;
+}
+
+.image .zoom-image {
+    max-width: 650px;
+    max-height: 600px;
+    width: auto;
+    height: auto;
+}
+
+.compose-post-handler,
+.compose-post-handler-closed {
+    height: 71px;
+    margin: 8px;
+    color: white;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 8px;
+    background-color: rgb(47, 88, 183);
+}
+
+.compose-post-handler:hover,
+.compose-post-handler-closed:hover {
+    box-shadow:  0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    cursor: pointer;
+}
+
+.compose-post-handler h3,
+.compose-post-handler-closed h3 {
+    margin: 0;
+    padding: 0;
+    align-items: center;
+}
+
+.date {
+    margin: 10px 10px 10px 20px;
+    font-size: small;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1040;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000;
+    opacity: .5;
+}
+  
+.modal-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1050;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    outline: 0;
+}
+  
+.modal {
+    z-index: 100;
+    background: white;
+    position: relative;
+    margin: 5rem auto;
+    border-radius: 3px;
+    max-width: 1200px;
+    padding: 2rem;
+}
+
+.post-form-modal {
+    display: grid;
+    grid-template-columns: 1fr 3fr .3fr;
+}
+
+.post-form-modal textarea[type=textarea] {
+    height: 350px;
+    width: unset;
+    width: 90%;
+}
+
+.images-post-form-modal {
+    padding: 10px;
+    align-self: center;
+}
+
+.post-form-button-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+.post-form-modal-expand-button,
+.post-form-modal-collapse-button {
+    background-color: rgb(157, 157, 247);
+    color: white;
+    border-radius: 8px;
+    padding: 4px 6px;
+    height: 30px;
+    width: 65px;
+    align-self: start;
+}
+
+.post-form-modal-submit-button {
+    background-color: rgb(157, 157, 247);
+    color: white;
+    border-radius: 8px;
+    padding: 4px 6px;
+    height: 30px;
+    width: 60px;
+    align-self: end;
+}
