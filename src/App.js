@@ -21,11 +21,11 @@ export default function App() {
     token: undefined,
     user: undefined
   });
+  const token = localStorage.getItem("auth-token")
 
 
   useEffect(() => {
     const checkLoggedIn = async () => {
-      const token = localStorage.getItem("auth-token")
 
       if (await isLoggedIn()) {
         
@@ -43,7 +43,7 @@ export default function App() {
     }
 
     checkLoggedIn()
-  })
+  }, [token])
 
   return (
     <>
