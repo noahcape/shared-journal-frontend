@@ -12,11 +12,8 @@ export default function PostEditHandler(props) {
         props.setReload(!props.reload)
     }
 
-    const deletePost = async () => {
-        await postAPI.deletePost(props.post._id).then(() => {
-            props.setReload(!props.reload)
-        })
-   
+    const deletePost = () => {
+        postAPI.deletePost(props.post._id).then(() => props.setReload(!props.reload))
     }
 
     return (
