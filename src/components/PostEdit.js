@@ -23,7 +23,7 @@ export default function PostEdit(props) {
             "keys": deletedImageKeys
         }
 
-        await postAPI.deleteImage(data).then(() => {
+        postAPI.deleteImage(data).then(() => {
             props.changeEditState()
         })
     }
