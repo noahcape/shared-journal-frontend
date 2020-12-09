@@ -2,7 +2,7 @@ import axios from "axios"
 require("dotenv").config()
 
 async function addPost(data) {
-    await axios(`http://${process.env.REACT_APP_SERVER}/posts/new`, {
+    await axios(`https://${process.env.REACT_APP_SERVER}/posts/new`, {
         method: "post",
         headers: { "x-auth-token": localStorage.getItem("auth-token") }, data
     })
@@ -10,7 +10,7 @@ async function addPost(data) {
 
 async function deletePost(id) {
     await axios({
-        url: `http://${process.env.REACT_APP_SERVER}/posts/${id}`,
+        url: `https://${process.env.REACT_APP_SERVER}/posts/${id}`,
         method: "delete",
         headers: { "x-auth-token": localStorage.getItem("auth-token") }
     })
@@ -18,7 +18,7 @@ async function deletePost(id) {
 
 async function editPost(id, text) {
     await axios({
-        url: `http://${process.env.REACT_APP_SERVER}/posts/edit`,
+        url: `https://${process.env.REACT_APP_SERVER}/posts/edit`,
         method: "put",
         headers: { "x-auth-token": localStorage.getItem("auth-token") },
         params: {
@@ -30,7 +30,7 @@ async function editPost(id, text) {
 
 async function getPost(id) {
     const res = await axios({
-        url: `http://${process.env.REACT_APP_SERVER}/posts/getById?id=${id}`,
+        url: `https://${process.env.REACT_APP_SERVER}/posts/getById?id=${id}`,
         method: "get",
         headers: { "x-auth-token": localStorage.getItem("auth-token") },
     })
@@ -40,7 +40,7 @@ async function getPost(id) {
 
 async function getPosts() {
     const res = await axios({
-        url: `http://${process.env.REACT_APP_SERVER}/posts/`,
+        url: `https://${process.env.REACT_APP_SERVER}/posts/`,
         method: "get",
         headers: { "x-auth-token": localStorage.getItem("auth-token") },
     })
@@ -50,7 +50,7 @@ async function getPosts() {
 
 async function deleteImage(data) {
     await axios({
-        url: `http://${process.env.REACT_APP_SERVER}/posts/deleteImage`,
+        url: `https://${process.env.REACT_APP_SERVER}/posts/deleteImage`,
         method: "delete",
         headers: { "x-auth-token": localStorage.getItem("auth-token")},
         data
@@ -59,7 +59,7 @@ async function deleteImage(data) {
 
 async function getDateOptions() {
     const res = await axios({
-        url: `http://${process.env.REACT_APP_SERVER}/posts/getDateOptions`,
+        url: `https://${process.env.REACT_APP_SERVER}/posts/getDateOptions`,
         method: "GET",
         headers: { "x-auth-token": localStorage.getItem("auth-token")}
     })
@@ -69,7 +69,7 @@ async function getDateOptions() {
 
 async function getPostsByDate(month, year) {
     const res = await axios({
-        url: `http://${process.env.REACT_APP_SERVER}/posts/byDate?month=${month}&year=${year}`,
+        url: `https://${process.env.REACT_APP_SERVER}/posts/byDate?month=${month}&year=${year}`,
         method: "GET",
         headers: { "x-auth-token": localStorage.getItem("auth-token")}
     })
@@ -79,7 +79,7 @@ async function getPostsByDate(month, year) {
 
 async function getPostsBy(month, year) {
     const res = await axios({
-        url: `http://${process.env.REACT_APP_SERVER}/posts/getBy?${month ? "&month=" + month : ""}${year ? "&year=" + year : ""}`,
+        url: `https://${process.env.REACT_APP_SERVER}/posts/getBy?${month ? "&month=" + month : ""}${year ? "&year=" + year : ""}`,
         method: "GET",
         headers: { "x-auth-token": localStorage.getItem("auth-token")}
     })
@@ -89,7 +89,7 @@ async function getPostsBy(month, year) {
 
 async function publicGetDateOptions(journalName) {
     const res = await axios({
-        url: `http://${process.env.REACT_APP_SERVER}/posts/public_getDateOptions?journal_name=${journalName}`,
+        url: `https://${process.env.REACT_APP_SERVER}/posts/public_getDateOptions?journal_name=${journalName}`,
         method: "GET"
     })
 
@@ -98,7 +98,7 @@ async function publicGetDateOptions(journalName) {
 
 async function publicGetPosts(journalName, month, year) {
     const res = await axios({
-        url: `http://${process.env.REACT_APP_SERVER}/posts/public_get?journal_name=${journalName}${month ? "&month=" + month : ""}${year ? "&year=" + year : ""}`,
+        url: `https://${process.env.REACT_APP_SERVER}/posts/public_get?journal_name=${journalName}${month ? "&month=" + month : ""}${year ? "&year=" + year : ""}`,
         method: "GET",
     })
 

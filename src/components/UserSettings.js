@@ -16,7 +16,7 @@ export default function UserSettings() {
 
         const getSettings = async () => {
             const res = await axios({
-                url: `http://${process.env.REACT_APP_SERVER}/settings/get`,
+                url: `https://${process.env.REACT_APP_SERVER}/settings/get`,
                 method: "get",
                 headers: { "x-auth-token": localStorage.getItem("auth-token") }
 
@@ -39,7 +39,7 @@ export default function UserSettings() {
         e.preventDefault();
 
         await axios({
-            url: `http://${process.env.REACT_APP_SERVER}/settings/delete_recipient`,
+            url: `https://${process.env.REACT_APP_SERVER}/settings/delete_recipient`,
             method: "delete",
             headers: { "x-auth-token": localStorage.getItem("auth-token") },
             data: {
@@ -58,7 +58,7 @@ export default function UserSettings() {
 
         try {
             await axios({
-                url: `http://${process.env.REACT_APP_SERVER}/settings/edit_name?journalName=${journalName}`,
+                url: `https://${process.env.REACT_APP_SERVER}/settings/edit_name?journalName=${journalName}`,
                 method: "PUT",
                 headers: { "x-auth-token": localStorage.getItem("auth-token") }
             })

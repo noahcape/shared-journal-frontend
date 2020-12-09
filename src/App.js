@@ -31,7 +31,7 @@ export default function App() {
         
         let userRes = {}
         if (token !== "") {
-          userRes = await axios.get(`http://${process.env.REACT_APP_SERVER}/users/`,
+          userRes = await axios.get(`https://${process.env.REACT_APP_SERVER}/users/`,
             { headers: { "x-auth-token": token } })
         }
 

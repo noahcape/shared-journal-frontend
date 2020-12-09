@@ -28,7 +28,7 @@ export default class AddRecipient extends React.Component {
 
         if (!this.props.recipients.includes(this.state.recipient)) {
             axios({
-                url: `http://${process.env.REACT_APP_SERVER}/settings/add_recipient`,
+                url: `https://${process.env.REACT_APP_SERVER}/settings/add_recipient`,
                 method: "PUT",
                 headers: { "x-auth-token": localStorage.getItem("auth-token") },
                 data: {

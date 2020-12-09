@@ -24,18 +24,18 @@ export default function Register() {
             const newUser = { email, password, passwordCheck, displayName: finalJournalName }
 
             await axios.post(
-                `http://${process.env.REACT_APP_SERVER}/users/register`,
+                `https://${process.env.REACT_APP_SERVER}/users/register`,
                 newUser
             );
 
-            const loginRes = await axios.post(`http://${process.env.REACT_APP_SERVER}/users/login`, {
+            const loginRes = await axios.post(`https://${process.env.REACT_APP_SERVER}/users/login`, {
                 email, password
             });
 
             const userID = loginRes.data.user.id
 
             await axios({
-                url: `http://${process.env.REACT_APP_SERVER}/settings/new`,
+                url: `https://${process.env.REACT_APP_SERVER}/settings/new`,
                 method: "POST",
                 data: {
                     displayName: finalJournalName,

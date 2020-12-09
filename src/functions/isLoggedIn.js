@@ -13,7 +13,7 @@ const isLoggedIn = async () => {
     }
 
     const tokenRes = await axios.post(
-        `http://${process.env.REACT_APP_SERVER}/users/tokenIsValid`,
+        `https://${process.env.REACT_APP_SERVER}/users/tokenIsValid`,
         null,
         { headers: { "x-auth-token": token } }
     )

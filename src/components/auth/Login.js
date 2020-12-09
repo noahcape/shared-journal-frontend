@@ -18,7 +18,7 @@ export default function Login() {
         try {
             const loginUser = { email, password }
             const loginRes = await axios.post(
-                `http://${process.env.REACT_APP_SERVER}/users/login`,
+                `https://${process.env.REACT_APP_SERVER}/users/login`,
                 loginUser
             );
 
