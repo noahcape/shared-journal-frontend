@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import postAPI from "../API/posts.api"
 
 import PostRead from "./PostRead"
@@ -7,26 +7,16 @@ import PostEdit from "./PostEdit"
 export default function PostEditHandler(props) {
     const [isEditState, setIsEditState] = useState(false)
 
-    // useEffect(() => {
-    //     let isCancelled = false
-        
-    //     const getPost = async () => {
-    //         await postAPI.getPost(props.post._id).then(res => {
-    //             if (!isCancelled) setPost(res)
-    //         })
-    //     }
-
-    //     getPost()
-
-    //     return () => {isCancelled = true}
-    // })
-
     const changeEditState = () => {
         setIsEditState(!isEditState)
+        props.setReload(!props.reload)
     }
 
-    const deletePost = () => {
-        postAPI.deletePost(props.post._id)
+    const deletePost = async () => {
+        await postAPI.deletePost(props.post._id).then(() => {
+            props.setReload(!props.reload)
+        })
+   
     }
 
     return (
@@ -36,7 +26,7 @@ export default function PostEditHandler(props) {
             </>
         ) : (
                 <div className="grid-item">
-                    <PostRead post={props.post} className="post-info" changeEditState={changeEditState} deletePost={deletePost}/>
+                    <PostRead post={props.post} className="post-info" changeEditState={changeEditState} deletePost={deletePost} setReload={props.setReload} reload={props.reload} />
                 </div>
             )
     )

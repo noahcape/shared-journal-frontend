@@ -1,15 +1,15 @@
 import React from "react"
-import postsAPI from "../API/posts.api";
 
 class PostRead extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             counter: 0,
-            images: undefined,
+            images: this.props.post.images,
             zoomImage: false
         }
 
+        this.update = true
         this.incrementCounter = this.incrementCounter.bind(this)
         this.decrementCounter = this.decrementCounter.bind(this)
         this.renderImage = this.renderImage.bind(this)
@@ -17,20 +17,16 @@ class PostRead extends React.Component {
         this.zoom = this.zoom.bind(this)
     }
 
-    async componentDidUpdate() {
-        let isCancelled = false
+    componentDidMount() {
+        if (this.update) {
+            this.setState({
+                images: this.props.post.images
+            })
+        }
+    }
 
-        await postsAPI.getPost(this.props.post._id).then(res => {
-            if (!isCancelled) {
-                if (res) {
-                    this.setState({
-                        images: res.images
-                    })
-                }
-            }
-        })
-
-        return () => (isCancelled = true)
+    componentWillUnmount() {
+        this.update = false
     }
 
     zoom = () => {

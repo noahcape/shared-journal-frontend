@@ -11,6 +11,7 @@ export default function Home() {
     const [dateOptions, setDateOptions] = useState({})
     const [month, setMonth] = useState()
     const [year, setYear] = useState()
+    const [reload, setReload] = useState(false)
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
 
@@ -40,7 +41,7 @@ export default function Home() {
             isCancelled = true;
         };
 
-    }, [month, year]);
+    }, [month, year, reload]);
 
     const renderDateOptions = () => {
         return dateOptions && Object.keys(dateOptions).map((year, index) => {
@@ -69,7 +70,7 @@ export default function Home() {
     const renderPosts = () => {
         return posts && posts.map((post, index) => {
             return <div key={index}>
-                <PostEditHandler post={post} />
+                <PostEditHandler post={post} setReload={setReload} reload={reload} />
             </div>
 
         });
@@ -80,7 +81,7 @@ export default function Home() {
             <h1>
                 {userData.user && userData.user.journalName}
             </h1>
-            <PostForm />
+            <PostForm setReload={setReload} reload={reload} />
             {posts && posts[0] ? (
                 <>
                     <div className="user-options">

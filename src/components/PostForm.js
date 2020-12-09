@@ -6,7 +6,7 @@ import postAPI from "../API/posts.api"
 import ImagePreview from "./ImagePreview"
 import PostFormModal from "./PostFormModal"
 
-export default function PostForm() {
+export default function PostForm(props) {
     const [post, setPost] = useState("")
     const [images, setImages] = useState([])
     const [loading, setLoading] = useState(false)
@@ -64,19 +64,11 @@ export default function PostForm() {
         data.append("month", date.getMonth())
         data.append("year", date.getFullYear())
 
-        const postPost = async () => {
-            setLoading(true)
-            await postAPI.addPost(data).then(() => {
-                setLoading(false)
-                window.location.reload(false)
-            })
-        }
-
-        images.length !== 0 ? (
-            postPost()
-        ) : (
-                await postAPI.addPost(data)
-            )
+        setLoading(true)
+        postAPI.addPost(data).then(() => {
+            setLoading(false)
+            props.setReload(!props.reload)
+        })
 
         setPost("")
         setImages([])
@@ -96,7 +88,7 @@ export default function PostForm() {
                             <>
                                 <div className="compose-post-handler" onClick={() => changeCompose()}>
                                     <h3>Compose a Post</h3>
-                                    <button style={{"fontSize": "25px"}}>v</button>
+                                    <button style={{ "fontSize": "25px" }}>v</button>
                                 </div>
                                 <div className="form-grid">
                                     {images.length !== 0 ? (
