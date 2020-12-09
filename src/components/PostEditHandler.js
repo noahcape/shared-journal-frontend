@@ -6,21 +6,20 @@ import PostEdit from "./PostEdit"
 
 export default function PostEditHandler(props) {
     const [isEditState, setIsEditState] = useState(false)
-    const [post, setPost] = useState()
 
-    useEffect(() => {
-        let isCancelled = false
+    // useEffect(() => {
+    //     let isCancelled = false
         
-        const getPost = async () => {
-            await postAPI.getPost(props.post._id).then(res => {
-                if (!isCancelled) setPost(res)
-            })
-        }
+    //     const getPost = async () => {
+    //         await postAPI.getPost(props.post._id).then(res => {
+    //             if (!isCancelled) setPost(res)
+    //         })
+    //     }
 
-        getPost()
+    //     getPost()
 
-        return () => {isCancelled = true}
-    })
+    //     return () => {isCancelled = true}
+    // })
 
     const changeEditState = () => {
         setIsEditState(!isEditState)
@@ -33,11 +32,11 @@ export default function PostEditHandler(props) {
     return (
         isEditState ? (
             <>
-                {post && <PostEdit post={post} changeEditState={changeEditState} />}
+                <PostEdit post={props.post} changeEditState={changeEditState} />
             </>
         ) : (
                 <div className="grid-item">
-                    {post && <PostRead post={post} className="post-info" changeEditState={changeEditState} deletePost={deletePost}/>}
+                    <PostRead post={props.post} className="post-info" changeEditState={changeEditState} deletePost={deletePost}/>
                 </div>
             )
     )

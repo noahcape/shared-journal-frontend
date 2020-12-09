@@ -40,7 +40,7 @@ export default function Home() {
             isCancelled = true;
         };
 
-    });
+    }, [month, year]);
 
     const renderDateOptions = () => {
         return dateOptions && Object.keys(dateOptions).map((year, index) => {
