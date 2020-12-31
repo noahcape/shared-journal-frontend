@@ -25,7 +25,7 @@ const PublicViewPost = (props) => {
     }
 
     const getDate = () => {
-        const date = new Date(this.props.post.date)
+        const date = new Date(props.post.date)
 
         if (date.getTimezoneOffset() > 0) {
             date.setTime(date.getTime() + date.getTimezoneOffset() * 60 * 1000);
