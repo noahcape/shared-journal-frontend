@@ -7,6 +7,7 @@ export default function PostEdit(props) {
     const [editedText, setEditedTest] = useState(props.post.text)
     const [deletedImages, setDeletedImages] = useState([])
     const [deletedImageKeys, setDeletedImageKeys] = useState([])
+    const [editedDate, setEditedDate] = useState(props.post.date.split("T")[0])
 
     const submitChanges = async (e) => {
         e.preventDefault();
@@ -15,7 +16,13 @@ export default function PostEdit(props) {
             return (alert("You cannot leave your post without any text"))
         }
 
-        postAPI.editPost(props.post._id, editedText);
+        postAPI.editPost(props.post._id, editedText).then(
+            editedDate === '' ? (
+                postAPI.editDate(props.post._id, props.post.date)
+            ) : (
+                    postAPI.editDate(props.post._id, new Date(editedDate))
+                )
+        )
 
         const data = {
             "id": props.post._id,
@@ -46,10 +53,18 @@ export default function PostEdit(props) {
                     placeholder="Add text to your Post"
                 />
                 <div>
-                <button className="post-edit-submit-button" onClick={(e) => submitChanges(e)}>submit</button>
-                <button className="post-edit-cancel-button" onClick={() => props.changeEditState()}>cancel</button>
+                    <button className="post-edit-submit-button" onClick={(e) => submitChanges(e)}>submit</button>
+                    <button className="post-edit-cancel-button" onClick={() => props.changeEditState()}>cancel</button>
                 </div>
-
+                <div className='post-edit-date'>
+                    <label>Date</label>
+                    <input
+                        type='date'
+                        value={editedDate}
+                        onChange={(e) => setEditedDate(e.target.value)}
+                    />
+                    <button className='post-edit-clear-date-button' onClick={() => setEditedDate('')}>clear</button>
+                </div>
             </div>
         ) : (
                 <div className="post-edit-grid">
@@ -69,9 +84,16 @@ export default function PostEdit(props) {
                         <button className="post-edit-submit-button" onClick={(e) => submitChanges(e)}>submit</button>
                         <button className="post-edit-cancel-button" onClick={() => props.changeEditState()}>cancel</button>
                     </div>
-                </div >
+                    <div className='post-date'>
+                        <label>Date</label>
+                        <input
+                            type='date'
+                            value={editedDate}
+                            onChange={(e) => setEditedDate(e.target.value)}
+                        />
+                        <button className='post-clear-date-button' onClick={() => setEditedDate('')}>clear</button>
+                    </div>
+                </div>
             )
-
-
     )
 }

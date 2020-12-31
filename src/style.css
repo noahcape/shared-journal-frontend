@@ -432,10 +432,38 @@ input[type="file"]:focus {
     display: flex;
 }
 
-.post-edit-grid button,
-.post-edit-grid-no-images button {
+.post-edit-submit-button,
+.post-edit-cancel-button {
     margin: 5px;
     float: right;
+}
+
+.post-date {
+    margin: 8px;
+    border-radius: 8px;
+    background-color: rgb(47, 88, 183);
+    padding: 8px;
+    width: 250px;
+    color: white;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.post-date label {
+    margin: 5px;
+}
+
+.post-date input {
+    border-radius: 8px;
+    padding: 4px;
+}
+
+.post-clear-date-button {
+    padding: 6px;
+    margin: 5px;
+    border-radius: 8px;
+    background-color: rgb(129, 139, 249);
 }
 
 .post-edit-submit-button {

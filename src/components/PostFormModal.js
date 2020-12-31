@@ -46,6 +46,14 @@ function PostFormModal(props) {
                         <button className="post-form-modal-collapse-button" onClick={toggle}>Collapse</button>
                         <button className="post-form-modal-submit-button" onClick={props.newPost}>Submit</button>
                     </div>
+                    <label>Date
+                        <input
+                            type='date'
+                            value={props.date}
+                            onChange={(e) => props.setDate(e.target.value)}
+                        />
+                        <button onClick={() => props.setDate('')}>clear</button>
+                    </label>
                 </div>
             </Modal>
         </>
