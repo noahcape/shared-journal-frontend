@@ -88,14 +88,14 @@ class PostRead extends React.Component {
     getDate = () => {
         const date = new Date(this.props.post.date)
 
+        if(date.getTimezoneOffset() > 0){
+            date.setTime( date.getTime() + date.getTimezoneOffset()*60*1000 );
+        }
+
         const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
-        const month = months[date.getMonth()]
-        const day = date.getDate()
-        const year = this.props.post.year
-
         return (
-            `${day} ~ ${month} ~ ${year}`
+            `${date.getDate()} ~ ${months[date.getMonth()]} ~ ${date.getFullYear()}`
         )
     }
 
