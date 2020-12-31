@@ -28,6 +28,18 @@ async function editPost(id, text) {
     })
 }
 
+async function editDate(id, date) {
+    await axios({
+        url: `https://${process.env.REACT_APP_SERVER}/posts/edit_date`,
+        method: 'PUT', 
+        headers: { "x-auth-token": localStorage.getItem("auth-token") },
+        data: {
+            postId: id,
+            dateTime: date
+        }
+    })
+}
+
 async function getPost(id) {
     const res = await axios({
         url: `https://${process.env.REACT_APP_SERVER}/posts/getById?id=${id}`,
@@ -105,4 +117,4 @@ async function publicGetPosts(journalName, month, year) {
     return res
 }
 
-export default { addPost, editPost, getPost, deletePost, getPosts, deleteImage, getDateOptions, getPostsByDate, publicGetPosts, publicGetDateOptions, getPostsBy};
+export default { addPost, editPost, getPost, deletePost, getPosts, deleteImage, getDateOptions, getPostsByDate, publicGetPosts, publicGetDateOptions, getPostsBy, editDate};

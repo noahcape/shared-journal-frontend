@@ -11,6 +11,7 @@ export default function PostForm(props) {
     const [images, setImages] = useState([])
     const [loading, setLoading] = useState(false)
     const [compose, setCompose] = useState(true)
+    const [date, setDate] = useState('')
 
     const handleChange = (event) => {
         setPost(event.target.value)
@@ -54,15 +55,21 @@ export default function PostForm(props) {
         }
 
         const data = new FormData()
-        const date = new Date(Date.now())
+
+        let postDate;
+        date === '' ? (
+            postDate = new Date(Date.now())
+        ) : (
+                postDate = new Date(date)
+            )
 
         data.append("text", post);
         images.map(image => {
             return data.append("image", image)
         })
-        data.append("date", date)
-        data.append("month", date.getMonth())
-        data.append("year", date.getFullYear())
+        data.append("date", postDate)
+        data.append("month", postDate.getMonth())
+        data.append("year", postDate.getFullYear())
 
         setLoading(true)
         postAPI.addPost(data).then(() => {
@@ -72,6 +79,7 @@ export default function PostForm(props) {
 
         setPost("")
         setImages([])
+        setDate('')
 
     }
 
@@ -107,8 +115,17 @@ export default function PostForm(props) {
                                         />
                                     </div>
                                     <div className="post-form-button-grid">
-                                        <PostFormModal post={post} images={images} handleChange={handleChange} newPost={newPost} deleteImage={deleteImage} handleFileUpload={handleFileUpload} />
+                                        <PostFormModal post={post} images={images} handleChange={handleChange} newPost={newPost} deleteImage={deleteImage} handleFileUpload={handleFileUpload} setDate={setDate} date={date} />
                                         <input type="submit" value="Submit" onClick={newPost} />
+                                    </div>
+                                    <div className='post-date'>
+                                        <label>Date</label>
+                                        <input
+                                            type='date'
+                                            value={date}
+                                            onChange={(e) => setDate(e.target.value)}
+                                        />
+                                        <button className='post-date-clear-button' onClick={() => setDate('')}>clear</button>
                                     </div>
                                 </div>
                             </>
