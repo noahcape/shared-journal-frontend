@@ -125,7 +125,7 @@ export default function PostForm(props) {
                                             value={date}
                                             onChange={(e) => setDate(e.target.value)}
                                         />
-                                        <button className='post-date-clear-button' onClick={() => setDate('')}>clear</button>
+                                        <button className='post-clear-date-button' onClick={() => setDate('')}>clear</button>
                                     </div>
                                 </div>
                             </>
