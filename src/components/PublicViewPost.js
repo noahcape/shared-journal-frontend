@@ -25,15 +25,16 @@ const PublicViewPost = (props) => {
     }
 
     const getDate = () => {
-        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-        const date = new Date(props.post.date)
+        const date = new Date(this.props.post.date)
 
-        const month = months[date.getMonth()]
-        const day = date.getDate()
-        const year = props.post.year
+        if (date.getTimezoneOffset() > 0) {
+            date.setTime(date.getTime() + date.getTimezoneOffset() * 60 * 1000);
+        }
+
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
         return (
-            `${day} ~ ${month} ~ ${year}`
+            `${date.getDate()} ~ ${months[date.getMonth()]} ~ ${date.getFullYear()}`
         )
     }
 
@@ -72,15 +73,15 @@ const PublicViewPost = (props) => {
                     </p>
                 </div>
             ) : (
-                <div className="post-info">
-                    {props.post.images.length !== 0 && <div className="image">
-                        <img className={zoomImage ? ("zoom-image") : ("non-zoom-image")} src={props.post.images[0]} alt="preview" onClick={zoom}/>
-                    </div>}
-                    <p className="post-text">
-                        {props.post.text}
-                    </p>
-                </div>
-            )}
+                    <div className="post-info">
+                        {props.post.images.length !== 0 && <div className="image">
+                            <img className={zoomImage ? ("zoom-image") : ("non-zoom-image")} src={props.post.images[0]} alt="preview" onClick={zoom} />
+                        </div>}
+                        <p className="post-text">
+                            {props.post.text}
+                        </p>
+                    </div>
+                )}
             <p className="date">{getDate()}</p>
         </>
     )
