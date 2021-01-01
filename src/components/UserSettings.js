@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react"
 import axios from "axios"
 import AddRecipient from "./AddRecipient"
 import ErrorNotice from "./misc/ErrorNotice"
+import RecipientBulkAdd from "./RecipientBulkAdd"
 require("dotenv").config()
 
 export default function UserSettings() {
@@ -10,6 +11,7 @@ export default function UserSettings() {
     const [error, setError] = useState()
     const [editName, setEditName] = useState(false)
     const [addRecipient, setAddRecipient] = useState(false)
+    const [bulkAdd, setBulkAdd] = useState(false)
 
     useEffect(() => {
         let isCancelled = false
@@ -99,20 +101,29 @@ export default function UserSettings() {
             <h3>Recipients:</h3>
             <p>Share your monthly updates with others by entering their email below.</p>
 
-            {
-                addRecipient ? (
-                    <div>
-                        <AddRecipient recipients={settings.recipients} changeAddRecipient={changeAddRecipient} />
-                        <button className="cancel-recipient-button" onClick={changeAddRecipient}>x</button>
-                    </div>
-                ) : (
-                        <>
-                            <button className="add-recipient-button" onClick={changeAddRecipient}>+</button>
-                            <span>add a recipient</span>
-                        </>
-                    )
-            }
+            {bulkAdd ? (
+                <div>
+                    <RecipientBulkAdd setBulkAdd={setBulkAdd} />
+                </div>
 
+            ) : (
+                    <>
+                        <div>
+                            <button style={styles.startBulkAdd} onClick={() => setBulkAdd(!bulkAdd)}>start a bulk add</button>
+                        </div>
+                        {addRecipient ? (
+                            <div>
+                                <AddRecipient recipients={settings.recipients} changeAddRecipient={changeAddRecipient} />
+                                <button className="cancel-recipient-button" onClick={changeAddRecipient}>x</button>
+                            </div>
+                        ) : (
+                                <>
+                                    <button className="add-recipient-button" onClick={changeAddRecipient}>+</button>
+                                    <span>add a recipient</span>
+                                </>
+                            )}
+                    </>
+                )}
             <div className="recipient-container">
                 {settings && settings.recipients.map((recipient, index) => {
                     return (
@@ -123,6 +134,17 @@ export default function UserSettings() {
                     )
                 })}
             </div>
-        </div >
+        </div>
     )
+}
+
+const styles = {
+    startBulkAdd: {
+        padding: 8,
+        marginTop: 10,
+        marginBottom: 10,
+        backgroundColor: 'rgb(129, 139, 249)',
+        borderRadius: 8,
+        color: 'white'
+    }
 }
