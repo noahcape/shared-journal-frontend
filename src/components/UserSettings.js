@@ -12,6 +12,7 @@ export default function UserSettings() {
     const [editName, setEditName] = useState(false)
     const [addRecipient, setAddRecipient] = useState(false)
     const [bulkAdd, setBulkAdd] = useState(false)
+    const [askDeleteAll, setAskDeleteAll] = useState(false)
 
     useEffect(() => {
         let isCancelled = false
@@ -69,6 +70,15 @@ export default function UserSettings() {
         } catch (err) {
             err.response.data && err.response.data.msg && setError(err.response.data.msg)
         }
+    }
+
+    const deleteAll = async () => {
+        await axios({
+            url: `https:${process.env.REACT_APP_SERVER}/settings/clear_recipients`,
+            method: 'PUT',
+            headers: { "x-auth-token": localStorage.getItem("auth-token") }
+        })
+        setAskDeleteAll(false)
     }
 
     return (
@@ -134,6 +144,15 @@ export default function UserSettings() {
                     )
                 })}
             </div>
+            {askDeleteAll ? (
+                <div style={styles.deleteAllConfirm}>
+                    <span>You sure... You would be deleting all your recipients</span>
+                    <button style={styles.deleteAll} onClick={deleteAll}>Delete All</button>
+                    <button style={styles.cancelButton} onClick={() => setAskDeleteAll(false)}>Cancel</button>
+                </div>
+            ) : (
+                settings && settings.recipients.length > 0 && <button style={styles.deleteAll} onClick={() => setAskDeleteAll(true)}>Delete All</button>
+            )}
         </div>
     )
 }
@@ -146,5 +165,23 @@ const styles = {
         backgroundColor: 'rgb(129, 139, 249)',
         borderRadius: 8,
         color: 'white'
+    },
+    deleteAll: {
+        padding: 8,
+        margin: 10,
+        borderRadius: 8,
+        backgroundColor: 'rgb(252, 167, 167)',
+        color: 'white',
+    },
+    cancelButton: {
+        padding: 8,
+        margin: 10,
+        borderRadius: 8,
+        backgroundColor: 'rgb(129, 139, 249)',
+        color: 'white'
+    },
+    deleteAllConfirm: {
+        display: 'flex',
+        alignItems: 'center'
     }
 }
