@@ -74,7 +74,7 @@ export default function UserSettings() {
 
     const deleteAll = async () => {
         await axios({
-            url: `https:${process.env.REACT_APP_SERVER}/settings/clear_recipients`,
+            url: `https://${process.env.REACT_APP_SERVER}/settings/clear_recipients`,
             method: 'PUT',
             headers: { "x-auth-token": localStorage.getItem("auth-token") }
         })
