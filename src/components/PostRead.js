@@ -1,4 +1,6 @@
 import React from "react"
+import { Card, Popconfirm } from 'antd'
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 
 class PostRead extends React.Component {
     constructor(props) {
@@ -6,7 +8,8 @@ class PostRead extends React.Component {
         this.state = {
             counter: 0,
             images: this.props.post.images,
-            zoomImage: false
+            zoomImage: false,
+            isMobile: window.innerWidth < 435
         }
 
         this.update = true
@@ -37,26 +40,11 @@ class PostRead extends React.Component {
 
     renderImage = () => {
         return (
-            <span className="image">
-                <button className="backButton" onClick={this.decrementCounter}>{"<"}</button>
-                {this.state.images.map((image, index) => {
-                    let style;
-                    if (this.state.zoomImage) {
-                        style = "zoom-image-scroll"
-                    } else {
-                        style = "image-scroll"
-                    }
-
-                    if (index === this.state.counter) {
-                        style += "-active"
-                    }
-
-                    return (
-                        <img className={style} src={image} alt={image} key={index} onClick={() => this.zoom()} />
-                    )
-                })}
-                <button className="forwardButton" onClick={this.incrementCounter}>{">"}</button>
-            </span>
+            this.state.images.map((image, index) => {
+                return (
+                    <img style={this.state.zoomImage ? (index === this.state.counter ? (styles.imageScrollZoomActive) : (styles.imageScrollZoom)) : (index === this.state.counter ? (styles.imageScrollNonZoomActive) : (styles.imageScrollNonZoom))} src={image} alt={image} key={index} onClick={() => this.zoom()} />
+                )
+            })
         )
     }
 
@@ -88,8 +76,8 @@ class PostRead extends React.Component {
     getDate = () => {
         const date = new Date(this.props.post.date)
 
-        if(date.getTimezoneOffset() > 0){
-            date.setTime( date.getTime() + date.getTimezoneOffset()*60*1000 );
+        if (date.getTimezoneOffset() > 0) {
+            date.setTime(date.getTime() + date.getTimezoneOffset() * 60 * 1000);
         }
 
         const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
@@ -101,31 +89,119 @@ class PostRead extends React.Component {
 
     render() {
         return (
-            this.state.images ? <>
-                {this.props.post.images.length > 1 ? (
-                    <div className="post-info">
+            <Card style={!this.state.isMobile ? styles.postStyle : {}} actions={[
+                <EditOutlined key='edit' onClick={() => this.props.changeEditState()} />,
+                <Popconfirm title="Are you sure to delete this post?" onConfirm={() => this.props.deletePost()} okText="Yes" cancelText="No">
+                    <DeleteOutlined key='delete' />
+                </Popconfirm>
+            ]}>
+                {this.state.images && this.props.post.images.length > 1 ? (
+                    <div style={styles.imageScrollContainer}>
+                        <button style={styles.imageScrollControlsLeft} onClick={this.decrementCounter}>{"<"}</button>
                         {this.renderImage()}
-                        <p className="post-text">
-                            {this.props.post.text}
-                        </p>
+                        <button style={styles.imageScrollControlsRight} onClick={this.incrementCounter}>{">"}</button>
                     </div>
                 ) : (
-                        this.props.post.images[0] && <div className="post-info">
-                            <div className="image">
-                                <img className={this.state.zoomImage ? ("zoom-image") : ("non-zoom-image")} src={this.props.post.images[0]} alt="preview" onClick={() => this.zoom()} />
-                            </div>
-                            <p className="post-text">
-                                {this.props.post.text}
-                            </p>
-                        </div>
+                        this.state.images && this.props.post.images[0] && <img style={this.state.zoomImage ? (styles.imageZoom) : (styles.imageNonZoom)} src={this.props.post.images[0]} alt="preview" onClick={() => this.zoom()} />
                     )}
-                {this.props.post.images.length === 0 && <p className="post-text">{this.props.post.text}</p>}
-                <button className="post-read-edit-button" type="button" onClick={() => this.props.changeEditState()}>edit</button>
-                <button className="post-read-delete-button" type="button" onClick={() => this.props.deletePost()}>delete</button>
-                <p className="date">{this.getDate()}</p>
-            </> : <></>
+                <p style={styles.postText}>{this.props.post.text}</p>
+                <p style={styles.postDate}>{this.getDate()}</p>
+            </Card>
         )
     }
 }
 
 export default PostRead
+
+const styles = {
+    postStyle: {
+        marginRight: 50,
+        marginLeft: 50,
+    },
+    postText: {
+        whiteSpace: 'pre-wrap',
+        paddingRight: 15,
+    },
+    postDate: {
+        fontSize: 12,
+    },
+    imageNonZoom: {
+        float: 'left',
+        borderRadius: 4,
+        margin: '3px 15px 15px 15px',
+        maxWidth: '25%',
+        maxHeight: 300,
+        width: 'auto',
+        height: 'auto',
+        cursor: 'zoom-in'
+    },
+    imageZoom: {
+        float: 'left',
+        borderRadius: 4,
+        margin: '3px 15px 15px 15px',
+        maxWidth: '45%',
+        maxHeight: 600,
+        width: 'auto',
+        height: 'auto',
+        cursor: 'zoom-out'
+    },
+    imageScrollZoomActive: {
+        position: 'relative',
+        float: 'left',
+        borderRadius: 4,
+        margin: '3px 15px 15px 15px',
+        maxWidth: 600,
+        maxHeight: 600,
+        width: 'auto',
+        height: 'auto',
+        cursor: 'zoom-out'
+    },
+    imageScrollNonZoomActive: {
+        position: 'relative',
+        float: 'left',
+        borderRadius: 4,
+        margin: '3px 15px 15px 15px',
+        maxWidth: 300,
+        maxHeight: 300,
+        width: 'auto',
+        height: 'auto',
+        cursor: 'zoom-in'
+
+    },
+    imageScrollZoom: {
+        opacity: 0,
+        position: 'fixed',
+        float: 'left',
+        width: 0,
+        height: 0,
+    },
+    imageScrollNonZoom: {
+        opacity: 0,
+        position: 'fixed',
+        float: 'left',
+        width: 0,
+        height: 0
+    },
+    imageScrollContainer: {
+        display: 'flex',
+        float: 'left',
+        marginRight: 15
+    },
+    imageScrollControlsRight: {
+        border: 'none',
+        backgroundColor: 'rgb(255, 255, 255)',
+        outline: 'none',
+        cursor: 'pointer',
+        padding: 0,
+        margin: 0
+    },
+    imageScrollControlsLeft: {
+        float: 'left',
+        border: 'none',
+        backgroundColor: 'rgb(255, 255, 255)',
+        outline: 'none',
+        cursor: 'pointer',
+        padding: 0,
+        margin: 0
+    }
+}

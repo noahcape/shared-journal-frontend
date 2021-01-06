@@ -18,13 +18,9 @@ export default function PostEditHandler(props) {
 
     return (
         isEditState ? (
-            <>
-                <PostEdit post={props.post} changeEditState={changeEditState} />
-            </>
+            <PostEdit post={props.post} changeEditState={changeEditState} />
         ) : (
-                <div className="grid-item">
-                    <PostRead post={props.post} className="post-info" changeEditState={changeEditState} deletePost={deletePost} setReload={props.setReload} reload={props.reload} />
-                </div>
+                <PostRead post={props.post} changeEditState={changeEditState} deletePost={deletePost} setReload={props.setReload} reload={props.reload} />
             )
     )
 }

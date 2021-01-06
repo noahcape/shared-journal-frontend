@@ -1,13 +1,18 @@
 import React, { useState } from "react"
-
+import { Typography, Spin, Input, Card } from 'antd'
+import { CloseCircleOutlined, CheckCircleOutlined } from '@ant-design/icons'
 import ImagePreview from "./ImagePreview"
 import postAPI from "../API/posts.api"
+
+const { Text } = Typography
+const { TextArea } = Input
 
 export default function PostEdit(props) {
     const [editedText, setEditedTest] = useState(props.post.text)
     const [deletedImages, setDeletedImages] = useState([])
     const [deletedImageKeys, setDeletedImageKeys] = useState([])
     const [editedDate, setEditedDate] = useState(props.post.date.split("T")[0])
+    const [loading, setLoading] = useState(false)
 
     const submitChanges = async (e) => {
         e.preventDefault();
@@ -29,8 +34,9 @@ export default function PostEdit(props) {
             "images": deletedImages,
             "keys": deletedImageKeys
         }
-
+        setLoading(true)
         postAPI.deleteImage(data).then(() => {
+            setLoading(false)
             props.changeEditState()
         })
     }
@@ -43,57 +49,69 @@ export default function PostEdit(props) {
     }
 
     return (
-        props.post.images.length === deletedImages.length ? (
-            <div className="post-edit-grid-no-images">
-                <textarea
-                    type="textarea"
-                    name="text"
-                    defaultValue={props.post.text}
-                    onChange={(e) => setEditedTest(e.target.value)}
-                    placeholder="Add text to your Post"
-                />
-                <div>
-                    <button className="post-edit-submit-button" onClick={(e) => submitChanges(e)}>submit</button>
-                    <button className="post-edit-cancel-button" onClick={() => props.changeEditState()}>cancel</button>
-                </div>
-                <div className='post-edit-date'>
-                    <label>Date</label>
-                    <input
-                        type='date'
-                        value={editedDate}
-                        onChange={(e) => setEditedDate(e.target.value)}
-                    />
-                    <button className='post-edit-clear-date-button' onClick={() => setEditedDate('')}>clear</button>
-                </div>
-            </div>
-        ) : (
-                <div className="post-edit-grid">
-                    <div className="post-edit-image-and-text">
-                        <div className="edit-fill">
-                            <ImagePreview post={props.post} images={props.post.images} deleteImage={deleteImage} />
-                        </div >
-                        <textarea
-                            type="textarea"
-                            name="text"
-                            defaultValue={props.post.text}
-                            onChange={(e) => setEditedTest(e.target.value)}
-                            placeholder="Add text to your Post"
-                        />
+        <Spin spinning={loading}>
+            <Card style={styles.cardForm} actions={[
+                <CloseCircleOutlined onClick={() => props.changeEditState()} />,
+                <CheckCircleOutlined onClick={(e) => submitChanges(e)} />
+            ]}>
+                {props.post.images.length === deletedImages.length ? (
+                    <div>
+                        <TextArea style={styles.postTextArea} name="text" defaultValue={props.post.text} onChange={(e) => setEditedTest(e.target.value)} placeholder="Add text to your Post" />
                     </div>
-                    <div className="post-edit-button-container">
-                        <button className="post-edit-submit-button" onClick={(e) => submitChanges(e)}>submit</button>
-                        <button className="post-edit-cancel-button" onClick={() => props.changeEditState()}>cancel</button>
-                    </div>
-                    <div className='post-date'>
-                        <label>Date</label>
-                        <input
-                            type='date'
-                            value={editedDate}
-                            onChange={(e) => setEditedDate(e.target.value)}
-                        />
-                        <button className='post-clear-date-button' onClick={() => setEditedDate('')}>clear</button>
-                    </div>
+                ) : (
+                        <div style={{display: 'flex'}}>
+                            <div style={styles.imageFill}>
+                                <ImagePreview post={props.post} images={props.post.images} deleteImage={deleteImage} />
+                            </div>
+                            <TextArea style={styles.postTextArea} name="text" defaultValue={props.post.text} onChange={(e) => setEditedTest(e.target.value)} placeholder="Add text to your Post" />
+                        </div>
+                    )}
+                <div style={styles.dateDiv}>
+                    <Text style={{ color: 'rgb(245, 245, 245)', marginRight: 10 }}>Date</Text>
+                    <input type='date' style={styles.dateInput} value={editedDate} onChange={(e) => setEditedDate(e.target.value)} />
                 </div>
-            )
+            </Card>
+        </Spin>
     )
+}
+
+const styles = {
+    cardForm: {
+        margin: 35,
+        paddingRight: 25,
+        paddingLeft: 25,
+        textAlign: 'center'
+    },
+    imageFill: {
+        padding: 10,
+        width: 280,
+        height: 240,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        border: '1.5px solid black',
+        borderRadius: 8,
+        marginRight: 25
+    },
+    dateDiv: {
+        padding: '5px 10px 5px 10px',
+        borderRadius: 8,
+        display: 'flex',
+        maxWidth: 350,
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor: 'rgb(47, 88, 183)',
+    },
+    dateInput: {
+        borderRadius: 2,
+        border: 'none'
+    },
+    postTextArea: {
+        margin: '0 0 20px 0',
+        height: 240,
+        padding: 10,
+        resize: 'none',
+        fontSize: 15,
+        outline: 'none'
+    },
 }

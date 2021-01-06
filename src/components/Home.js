@@ -13,6 +13,7 @@ export default function Home() {
     const [year, setYear] = useState()
     const [reload, setReload] = useState(false)
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    const [isMobile] = useState(window.innerWidth < 435);
 
 
     useEffect(() => {
@@ -69,7 +70,7 @@ export default function Home() {
 
     const renderPosts = () => {
         return posts && posts.map((post, index) => {
-            return <div key={index}>
+            return <div style={styles.postContainer} key={index}>
                 <PostEditHandler post={post} setReload={setReload} reload={reload} />
             </div>
 
@@ -78,31 +79,27 @@ export default function Home() {
 
     return (
         <div>
-            <h1>
-                {userData.user && userData.user.journalName}
-            </h1>
+            <h1>{userData.user && userData.user.journalName}</h1>
             <PostForm setReload={setReload} reload={reload} />
             {posts && posts[0] ? (
                 <>
-                    <div className="user-options">
-                        <span>
+                    <div style={isMobile ? styles.userOptionsMobile : styles.userOptionsWeb}>
+                        <div style={styles.userOptionsDiv}>
                             See posts from
-                            <select onChange={(e) => handleChange(e)}>
+                            <select style={styles.dateOptions} onChange={(e) => handleChange(e)}>
                                 <option defaultValue={undefined + "," + undefined}>all</option>
                                 {renderDateOptions()}
                             </select>
-                        </span>
+                        </div>
 
-                        {userData.user && <Link to={`/visitor/${userData.user.journalName.replace(" ", "_")}`}>
-                            <span className="view-journal-as-visitor-button">View Journal as a visitor</span>
+                        {userData.user && <Link  to={`/visitor/${userData.user.journalName.replace(" ", "_")}`}>
+                            <div style={styles.userOptionsDiv}>View Journal as a visitor</div>
                         </Link>}
                     </div>
 
                     <div className="home-post-title">{!year ? (<h1>All Posts</h1>) : (<h1>{`Posts from ${months[month]} ${year}`}</h1>)}</div>
 
-                    <div className="grid-container">
-                        {renderPosts()}
-                    </div>
+                    {renderPosts()}
                 </>
             ) : (
                     <h1>You have not Posted. Compose one above ^</h1>
@@ -110,4 +107,41 @@ export default function Home() {
         </div>
 
     );
+}
+
+const styles = {
+    postContainer: {
+        paddingBottom: 10
+    },
+    userOptionsWeb: {
+        alignItems: 'center',
+        borderRadius: 8,
+        padding: 15,
+        margin: 8,
+        color: 'white',
+        backgroundColor: 'rgb(47, 88, 183)',
+        display: 'flex',
+        justifyContent: 'space-between',
+    },
+    userOptionsMobile: {
+        display: 'block',
+        borderRadius: 8,
+        padding: 15,
+        margin: 8,
+        color: 'white',
+        backgroundColor: 'rgb(47, 88, 183)',
+    },
+    dateOptions: {
+        marginLeft: 5,
+        color: 'white',
+        border: '3px solid white',
+        backgroundColor: 'rgb(129, 139, 249)'
+    },
+    userOptionsDiv: {
+        color: 'white',
+        padding: 8,
+        borderRadius: 8,
+        backgroundColor: 'rgb(129, 139, 249)',
+        margin: 5
+    },
 }

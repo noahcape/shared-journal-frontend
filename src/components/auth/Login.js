@@ -1,20 +1,21 @@
 import React, { useState, useContext } from "react"
 import UserContext from "../../context/UserContext"
 import { useHistory } from "react-router-dom"
-import ErrorNotice from "../misc/ErrorNotice"
+import { Form, Input, Alert, Button, Card, Typography } from "antd"
 import axios from "axios"
 require("dotenv").config()
 
-export default function Login() {
+const { Text, Title } = Typography
+
+export default function Login({ setSignIn }) {
     const [email, setEmail] = useState()
     const [password, setPassword] = useState()
-    const [error, setError] = useState()
+    const [error, setError] = useState({ msg: '' })
 
     const { setUserData } = useContext(UserContext)
     const history = useHistory()
 
-    const submit = async (e) => {
-        e.preventDefault();
+    const submit = async () => {
         try {
             const loginUser = { email, password }
             const loginRes = await axios.post(
@@ -31,30 +32,49 @@ export default function Login() {
 
             history.push("/")
         } catch (err) {
-            err.response.data && err.response.data.msg && setError(err.response.data.msg)
+            err.response.data && err.response.data.msg && setError({ ...error, msg: err.response.data.msg })
         }
     }
 
     return (
-        <div className="page">
-            <h2>Log in</h2>
-            {error && <ErrorNotice message={error} clearError={() => setError(undefined)} />}
-            <form className="form" onSubmit={submit}>
-                <label htmlFor="login-email">Email</label>
-                <input
-                    id="login-email"
-                    type="email"
-                    onChange={(e) => setEmail(e.target.value)}
-                />
-
-                <label htmlFor="login-password">Password</label>
-                <input
-                    id="login-password"
-                    type="password"
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-                <input type="submit" value="Log in" />
-            </form>
-        </div>
+        <Card style={styles.logInForm}>
+            <Title style={{ textAlign: 'center' }}>Log In</Title>
+            {error.msg.length > 0 && <Alert style={styles.errorMsg} description={error.msg} type="error" action={<Button type='text' shape='circle' onClick={() => setError({ ...error, msg: '' })}>X</Button>} />}
+            <Form {...layout}>
+                <Form.Item label={<Text>Email</Text>}>
+                    <Input type="email" onChange={(e) => setEmail(e.target.value)} />
+                </Form.Item>
+                <Form.Item label={<Text>Password</Text>}>
+                    <Input.Password onChange={(e) => setPassword(e.target.value)} />
+                </Form.Item>
+                <Form.Item {...tailLayout}>
+                    <Button type='primary' onClick={submit}>Log In</Button>
+                </Form.Item>
+                <Form.Item {...tailLayout}>
+                    <Button type='primary' onClick={() => setSignIn(false)}>I don't have an account - Register</Button>
+                </Form.Item>
+            </Form>
+        </Card>
     )
+}
+
+const layout = {
+    labelCol: { span: 6 },
+    wrapperCol: { span: 16 },
+};
+
+const tailLayout = {
+    wrapperCol: { offset: 6, span: 16 },
+};
+
+const styles = {
+    logInForm: {
+        width: 600,
+        borderRadius: 8,
+        margin: 25
+    },
+    errorMsg: {
+        padding: 5,
+        margin: '10px 0 10px 0'
+    }
 }

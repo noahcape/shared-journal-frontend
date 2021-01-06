@@ -9,6 +9,7 @@ const PublicView = (props) => {
     const [month, setMonth] = useState()
     const [year, setYear] = useState()
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    const isMobile = window.innerWidth < 435
 
     useEffect(() => {
         let isCancelled = false;
@@ -53,11 +54,9 @@ const PublicView = (props) => {
 
     const renderPosts = () => {
         return posts && posts.map((post, index) => {
-            return (
-                <div className="grid-item" key={index} style={{ "gridTemplateColumns": "2fr" }}>
-                    <PublicViewPost className="post-info" post={post} />
-                </div>
-            )
+            return <div style={styles.postContainer} key={index} >
+                <PublicViewPost post={post} />
+            </div>
         })
     }
 
@@ -75,27 +74,59 @@ const PublicView = (props) => {
 
     return (
         <div>
-            <div className="public-view-header-n-options">
-                <h1>{props.match.params && props.match.params.journalName.split("_").join(" ")}</h1>
-                <span className="public-view-options">
+            <div style={isMobile ? (styles.userOptionsMobile) : (styles.userOptionsWeb)}>
+                <div>
+                    <h1 style={{ color: 'white', padding: 0, margin: 0 }}>{props.match.params && props.match.params.journalName.split("_").join(" ")}</h1>
+                </div>
+                <div style={styles.userOptionsDiv}>
                     See posts from
-                    <select onChange={(e) => handleChange(e)}>
+                    <select style={styles.dateOptions} onChange={(e) => handleChange(e)}>
                         <option defaultValue={undefined + "," + undefined}>all</option>
                         {renderDateOptions()}
                     </select>
-                </span>
+                </div>
             </div>
-
-
             <span className="public-view-post-header">{!year ? (<h1>All Posts</h1>) : (<h1>{`Posts from ${months[month]} ${year}`}</h1>)}</span>
-
-            <div className="grid-container">
-
-                {renderPosts()}
-            </div>
-
+            {renderPosts()}
         </div>
     )
 }
 
 export default PublicView;
+
+const styles = {
+    postContainer: {
+        paddingBottom: 10
+    },
+    userOptionsWeb: {
+        alignItems: 'center',
+        borderRadius: 8,
+        padding: 15,
+        margin: 8,
+        color: 'white',
+        backgroundColor: 'rgb(47, 88, 183)',
+        display: 'flex',
+        justifyContent: 'space-between',
+    },
+    userOptionsMobile: {
+        display: 'block',
+        borderRadius: 8,
+        padding: 15,
+        margin: 8,
+        color: 'white',
+        backgroundColor: 'rgb(47, 88, 183)',
+    },
+    dateOptions: {
+        marginLeft: 5,
+        color: 'white',
+        border: '3px solid white',
+        backgroundColor: 'rgb(129, 139, 249)'
+    },
+    userOptionsDiv: {
+        color: 'white',
+        padding: 8,
+        borderRadius: 8,
+        backgroundColor: 'rgb(129, 139, 249)',
+        margin: 5,
+    },
+}

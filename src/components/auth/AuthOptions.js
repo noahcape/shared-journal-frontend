@@ -7,14 +7,6 @@ export default function AuthOptions() {
 
     const history = useHistory();
 
-    const register = () => {
-        history.push("/register")
-    }
-
-    const login = () => {
-        history.push("/login")
-    }
-
     const userSettings = () => {
         history.push("/user_settings")
     }
@@ -26,25 +18,34 @@ export default function AuthOptions() {
         })
 
         localStorage.setItem("auth-token", "")
-        window.location.reload(false)
+        // window.location.reload(false)
         history.push("/home")
 
     }
 
     return (
-        <nav className="auth-options">
-            {userData.user ? (
-                <>
-                <button onClick={userSettings}>User Settings</button>
-                <button onClick={logout}>Log out</button>
-                </>
-            ) : (
-                <>
-                    <button onClick={register}>Register</button>
-                    <button onClick={login}>Log in</button>
-                </>
-            )}
-
-        </nav>
+        userData.user ? (
+            <div style={styles.buttonDiv}>
+                <button style={styles.button} onClick={userSettings}>User Settings</button>
+                <button style={styles.button} onClick={logout}>Log out</button>
+            </div>
+        ) : <></>
     )
+}
+
+const styles = {
+    buttonDiv: {
+        display: 'flex'
+    },
+    button: {
+        height: '50px',
+        backgroundColor: 'rgb(47, 88, 183)',
+        color: 'rgb(245, 245, 245)',
+        alignItems: 'center',
+        border: 'none',
+        cursor: 'pointer',
+        outline: 'none',
+        fontSize: 15,
+        padding: '0 10px 0 10px'
+    }
 }

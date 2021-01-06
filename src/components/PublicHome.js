@@ -1,8 +1,14 @@
 import React, { useEffect } from "react"
 import { useHistory } from "react-router-dom"
 import isLoggedIn from "../functions/isLoggedIn"
+import { Typography, Row, Col } from 'antd'
+import Login from "./auth/Login"
+import Register from "./auth/Register"
+
+const { Text, Title } = Typography
 
 const Home = () => {
+    const [signIn, setSignIn] = React.useState(false)
     const history = useHistory()
 
     useEffect(() => {
@@ -22,15 +28,27 @@ const Home = () => {
     })
 
     return (
-        <div>
-            <h2>
-                Welcome to Shared-Journal
-            </h2>
-            <p>
-                Here you can create a journal and we will take care of sharing your moments with your closest friends and family.
-            </p>
-        </div>
+        <Row gutter={[10, 10]} style={styles.row}>
+            <Col span={10}>
+                <Title>Welcome to Shared-Journal</Title>
+                <Text>Here you can create a journal and we will take care of sharing your moments with your closest friends and family.</Text>
+            </Col>
+            <Col>
+                {signIn ? (
+                    <Login setSignIn={setSignIn} />
+                ) : (
+                        <Register setSignIn={setSignIn} />
+                    )}
+            </Col>
+        </Row>
     )
+}
+
+const styles = {
+    row: {
+        display: 'flex',
+        justifyContent: 'space-evenly'
+    }
 }
 
 export default Home
