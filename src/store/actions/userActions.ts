@@ -7,7 +7,7 @@ dotenv.config()
 
 export const registerUser = (data: any) => async (dispatch: Dispatch<UserDispatchTypes>) => {
     const res = await axios({
-        url: `${process.env.REACT_APP_BACKEND}/users/register`,
+        url: `${process.env.REACT_APP_BACKEND}/api/users/register`,
         method: 'POST',
         data
     })
@@ -20,7 +20,7 @@ export const registerUser = (data: any) => async (dispatch: Dispatch<UserDispatc
 
 export const loginUser = (data: any) => async (dispatch: Dispatch<UserDispatchTypes>) => {
     const res = await axios({
-        url: `${process.env.REACT_APP_BACKEND}/users/login`,
+        url: `${process.env.REACT_APP_BACKEND}/api/users/login`,
         method: 'POST',
         data
     })
@@ -35,7 +35,7 @@ export const loginUser = (data: any) => async (dispatch: Dispatch<UserDispatchTy
 
 export const isTokenValid = (token: string) => async (dispatch: Dispatch<UserDispatchTypes>) => {
     const res = await axios({
-        url: `${process.env.REACT_APP_BACKEND}/users/tokenIsValid`,
+        url: `${process.env.REACT_APP_BACKEND}/api/users/isTokenValid`,
         method: 'POST',
         headers: { "x-auth-token": token }
     })
@@ -50,7 +50,7 @@ export const isTokenValid = (token: string) => async (dispatch: Dispatch<UserDis
 
 export const getUser = (token: string) => async (dispatch: Dispatch<UserDispatchTypes>) => {
     const res = await axios({
-        url: `${process.env.REACT_APP_BACKEND}/users/`,
+        url: `${process.env.REACT_APP_BACKEND}/api/users/`,
         method: 'GET',
         headers: { 'x-auth-token': token }
     })
