@@ -1,38 +1,29 @@
 import React, { useState, useContext } from "react"
-import UserContext from "../../context/UserContext"
+import { connect } from 'react-redux'
 import { useHistory } from "react-router-dom"
+import UserContext from "../../context/UserContext"
+import { loginUser } from '../../store/actions/userActions'
 import { Form, Input, Alert, Button, Card, Typography } from "antd"
-import axios from "axios"
 require("dotenv").config()
 
 const { Text, Title } = Typography
 
-export default function Login({ setSignIn }) {
+const Login = ({ setSignIn, loginUser }) => {
     const [email, setEmail] = useState()
     const [password, setPassword] = useState()
     const [error, setError] = useState({ msg: '' })
-
     const { setUserData } = useContext(UserContext)
     const history = useHistory()
 
     const submit = async () => {
+        const loginData = { email, password }
         try {
-            const loginUser = { email, password }
-            const loginRes = await axios.post(
-                `https://${process.env.REACT_APP_SERVER}/users/login`,
-                loginUser
-            );
-
-            setUserData({
-                token: loginRes.data.token,
-                user: loginRes.data.user
-            });
-
-            localStorage.setItem("auth-token", loginRes.data.token);
-
-            history.push("/")
-        } catch (err) {
-            err.response.data && err.response.data.msg && setError({ ...error, msg: err.response.data.msg })
+            const loginRes = await loginUser(loginData)
+            setUserData({token: loginRes.token, user: loginRes.user})
+            localStorage.setItem("auth-token", loginRes.token)
+            history.push('/')
+        } catch(e) {
+            e.response.data && e.response.data.msg && setError({ ...error, msg: e.response.data.msg })
         }
     }
 
@@ -57,6 +48,8 @@ export default function Login({ setSignIn }) {
         </Card>
     )
 }
+
+export default connect(null, { loginUser })(Login)
 
 const layout = {
     labelCol: { span: 6 },

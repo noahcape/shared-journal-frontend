@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import AuthOptions from "../auth/AuthOptions"
-import isLoggedIn from "../../functions/isLoggedIn"
 import logo from "../../favicon.ico"
 import { Typography } from 'antd'
+import isLoggedIn from "../../functions/isLoggedIn"
 
 const { Title } = Typography
 
-export default function Header() {
+const Header = () => {
     const [isAuthorized, setIsAuthorized] = useState(false)
     const [isMobile] = useState(window.innerWidth < 435);
 
@@ -37,6 +37,8 @@ export default function Header() {
         </div>
     )
 }
+
+export default Header
 
 const styles = {
     navBar: {

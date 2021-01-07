@@ -1,25 +1,27 @@
 
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Switch, Route } from "react-router-dom"
-import axios from "axios"
 import "./style.css"
 import { Layout } from "antd"
-
-import PrivateRoute from "./components/auth/PrivateRoute"
+import { connect } from 'react-redux'
+import { getPosts } from './store/actions/postActions'
+import { getSettings } from './store/actions/settingsActions'
+import { getUser } from './store/actions/userActions'
 import isLoggedIn from "./functions/isLoggedIn"
-
+import UserContext from "./context/UserContext"
+import PrivateRoute from "./components/auth/PrivateRoute"
 import Header from "./components/layout/Header"
 import Home from "./components/Home"
 import UserSettings from "./components/UserSettings"
-import UserContext from "./context/UserContext"
 import PublicView from "./components/PublicView"
 import PublicHome from "./components/PublicHome"
 import logo from "./favicon.ico"
+import { getJournalName } from './store/selectors/userDataSelector';
 require("dotenv").config()
 
 const { Content, Footer } = Layout
 
-export default function App() {
+const App = ({ getPosts, getSettings, getUser, journalName }) => {
   const [userData, setUserData] = useState({
     token: undefined,
     user: undefined
@@ -27,27 +29,20 @@ export default function App() {
   const token = localStorage.getItem("auth-token")
   const [isMobile] = useState(window.innerWidth < 435);
 
-
   useEffect(() => {
     const checkLoggedIn = async () => {
-
       if (await isLoggedIn()) {
-
-        let userRes = {}
-        if (token !== "") {
-          userRes = await axios.get(`https://${process.env.REACT_APP_SERVER}/users/`,
-            { headers: { "x-auth-token": token } })
+        if (token !== '') {
+          getPosts()
+          getSettings()
+          getUser(token).then((res) => {
+            setUserData({ token, user: res })
+          })
         }
-
-        setUserData({
-          token,
-          user: userRes.data
-        })
       }
     }
-
     checkLoggedIn()
-  }, [token])
+  }, [token, getPosts, getSettings, getUser, journalName])
 
   return (
     <Layout style={styles.applicationContainer}>
@@ -70,6 +65,12 @@ export default function App() {
     </Layout>
   );
 }
+
+const mapStateToProps = () => ({
+  journalName: getJournalName()
+})
+
+export default connect(mapStateToProps, { getPosts, getSettings, getUser })(App)
 
 const styles = {
   applicationContainer: {

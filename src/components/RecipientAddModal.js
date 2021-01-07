@@ -1,12 +1,13 @@
 import React from 'react'
-import axios from 'axios'
+import { connect } from 'react-redux'
 import { Modal, Button, Input, Form } from 'antd'
 import { UsergroupAddOutlined, UserAddOutlined } from '@ant-design/icons'
+import { bulkAddRecipients, addRecipient } from '../store/actions/settingsActions'
 require("dotenv").config()
 
 const { TextArea } = Input
 
-const RecipientAddModal = ({ recipients }) => {
+const RecipientAddModal = ({ recipients, bulkAddRecipients, addRecipient }) => {
     const re = /\S+@\S+\.\S+/
     const [isVisible, setIsVisible] = React.useState(false)
     const [isBulkAdd, setIsBulkAdd] = React.useState(false)
@@ -20,28 +21,21 @@ const RecipientAddModal = ({ recipients }) => {
         setSingleRecipient('')
     }
 
-    const submitBulk = async () => {
+    const submitBulk = () => {
         let noErrors = true
         if (bulkRecipients === '') {
             noErrors = false
-            alert('You must include at least one recipient') 
+            alert('You must include at least one recipient')
         }
         const recipientsArray = bulkRecipients.split(", ")
         recipientsArray.forEach(recipient => {
-            if (!re.test(recipient)) { 
+            if (!re.test(recipient)) {
                 noErrors = false
-                alert(`"${recipient}" is not a valid email`) 
+                alert(`"${recipient}" is not a valid email`)
             }
         })
         if (noErrors) {
-            await axios({
-                url: `https://${process.env.REACT_APP_SERVER}/settings/bulk_add_recipients`,
-                method: 'PUT',
-                headers: { "x-auth-token": localStorage.getItem("auth-token") },
-                data: {
-                    'emails': bulkRecipients
-                }
-            }).then(() => cleanUp())
+            bulkAddRecipients(bulkRecipients).then(() => cleanUp())
         }
     }
 
@@ -49,14 +43,7 @@ const RecipientAddModal = ({ recipients }) => {
         if (singleRecipient === "") { return alert("You cannot leave recipient blank") }
         if (!re.test(singleRecipient)) { return alert(`"${singleRecipient}" is not a valid email`) }
         if (!recipients.includes(singleRecipient)) {
-            axios({
-                url: `https://${process.env.REACT_APP_SERVER}/settings/add_recipient`,
-                method: "PUT",
-                headers: { "x-auth-token": localStorage.getItem("auth-token") },
-                data: {
-                    recipient: singleRecipient
-                }
-            }).then(() => cleanUp())
+            addRecipient(singleRecipient).then(() => cleanUp())
         } else {
             alert(`Your recipient list already contains ${singleRecipient}`)
         }
@@ -92,6 +79,8 @@ const RecipientAddModal = ({ recipients }) => {
     )
 }
 
+export default connect(null, { bulkAddRecipients, addRecipient })(RecipientAddModal)
+
 const styles = {
     modal: {
         width: 'auto'
@@ -106,5 +95,3 @@ const styles = {
         overflowY: 'auto',
     },
 }
-
-export default RecipientAddModal

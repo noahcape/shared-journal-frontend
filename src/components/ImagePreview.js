@@ -73,7 +73,7 @@ class ImagePreview extends React.Component {
                 counter: 0
             })
 
-            this.props.deleteImage(this.state.images[i], this.state.keys[i], e)
+            this.props.deleteImage(this.state.images[i], this.state.keys[i])
 
             this.setState({ images: images, keys: keys })
 
@@ -86,7 +86,7 @@ class ImagePreview extends React.Component {
                 counter: 0
             })
 
-            this.props.deleteImage(this.state.images[i], undefined, e)
+            this.props.deleteImage(this.state.images[i], undefined)
 
             this.setState({ images: images })
         }
@@ -103,7 +103,7 @@ class ImagePreview extends React.Component {
                             {this.renderImage()}
                             <button onClick={this.incrementCounter} style={styles.imageScrollControls}>{">"}</button>
                         </div>
-                        <DeleteOutlined onClick={(e) => this.handleDelete(this.state.counter, e)} />
+                        <DeleteOutlined onClick={() => this.handleDelete(this.state.counter)} />
                     </div>
                 ) : (
                         <div style={styles.imageScrollControlsContainer}>
@@ -114,7 +114,7 @@ class ImagePreview extends React.Component {
                                         <img src={URL.createObjectURL(this.state.images[0])} style={styles.image} alt={this.state.images[this.state.counter]} />
                                     )}
                             </div>
-                            <DeleteOutlined onClick={(e) => this.handleDelete(this.state.counter, e)} />
+                            <DeleteOutlined onClick={() => this.handleDelete(this.state.counter)} />
                         </div>
                     )
                 }

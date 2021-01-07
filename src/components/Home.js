@@ -1,48 +1,20 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { connect } from 'react-redux'
 import PostForm from "../components/PostForm";
-import UserContext from "../context/UserContext"
-import postAPI from "../API/posts.api"
 import PostEditHandler from "./PostEditHandler"
-import { Link } from "react-router-dom";
+import { getPosts } from '../store/actions/postActions'
+import { getPostsFromSelector, getDateOptions, getPostsBy } from "../store/selectors/postSelector";
+import { getUser, getJournalName } from "../store/selectors/userDataSelector";
 
-export default function Home() {
-    const { userData } = useContext(UserContext)
-    const [posts, setPosts] = useState();
-    const [dateOptions, setDateOptions] = useState({})
-    const [month, setMonth] = useState()
-    const [year, setYear] = useState()
-    const [reload, setReload] = useState(false)
+const Home = ({ posts, dateOptions, user, journalName, getPosts }) => {
+    const [month, setMonth] = useState('')
+    const [year, setYear] = useState('')
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
     const [isMobile] = useState(window.innerWidth < 435);
 
-
     useEffect(() => {
-        let isCancelled = false;
-
-        const getDateOptions = async () => {
-            await postAPI.getDateOptions().then(res => {
-                if (!isCancelled) {
-                    setDateOptions(res.data)
-                }
-            })
-        }
-
-        const getPosts = async () => {
-            await postAPI.getPostsBy(month, year).then(res => {
-                if (!isCancelled) {
-                    setPosts(res.data)
-                }
-            })
-        }
-
-        getPosts();
-        getDateOptions();
-
-        return () => {
-            isCancelled = true;
-        };
-
-    }, [month, year, reload]);
+        getPosts()
+    }, [getPosts])
 
     const renderDateOptions = () => {
         return dateOptions && Object.keys(dateOptions).map((year, index) => {
@@ -56,32 +28,44 @@ export default function Home() {
         })
     }
 
+    const openVisitorPage = () => {
+        const url = `https://sharedjournal.capefamily.org/visitor/${journalName.replace(" ", "_")}`;
+        window.open(url, '_blank');
+    }
+
     const handleChange = (e) => {
         const vars = e.target.value.split(",")
 
         if (vars[0] === "undefined") {
-            setMonth(undefined)
-            setYear(undefined)
+            setMonth('')
+            setYear('')
         } else {
             setMonth(parseInt(vars[0]))
             setYear(parseInt(vars[1]))
         }
     }
 
-    const renderPosts = () => {
-        return posts && posts.map((post, index) => {
+    const renderAllPosts = () => {
+        return posts.map((post, index) => {
             return <div style={styles.postContainer} key={index}>
-                <PostEditHandler post={post} setReload={setReload} reload={reload} />
+                <PostEditHandler post={post} />
             </div>
+        })
+    }
 
-        });
-    };
+    const renderPostsFromDate = () => {
+        return getPostsBy(month, year).map((post, index) => {
+            return <div style={styles.postContainer} key={index}>
+                <PostEditHandler post={post} />
+            </div>
+        })
+    }
 
     return (
         <div>
-            <h1>{userData.user && userData.user.journalName}</h1>
-            <PostForm setReload={setReload} reload={reload} />
-            {posts && posts[0] ? (
+            <h1>{journalName}</h1>
+            <PostForm />
+            {posts ? (
                 <>
                     <div style={isMobile ? styles.userOptionsMobile : styles.userOptionsWeb}>
                         <div style={styles.userOptionsDiv}>
@@ -92,14 +76,14 @@ export default function Home() {
                             </select>
                         </div>
 
-                        {userData.user && <Link  to={`/visitor/${userData.user.journalName.replace(" ", "_")}`}>
+                        {user && <span style={styles.pageRedirect} onClick={openVisitorPage}>
                             <div style={styles.userOptionsDiv}>View Journal as a visitor</div>
-                        </Link>}
+                        </span>}
                     </div>
 
-                    <div className="home-post-title">{!year ? (<h1>All Posts</h1>) : (<h1>{`Posts from ${months[month]} ${year}`}</h1>)}</div>
+                    <div className="home-post-title">{!year ? (posts.length > 0 && <h1>All Posts</h1>) : (<h1>{`Posts from ${months[month]} ${year}`}</h1>)}</div>
 
-                    {renderPosts()}
+                    {!month && !year ? renderAllPosts() : renderPostsFromDate()}
                 </>
             ) : (
                     <h1>You have not Posted. Compose one above ^</h1>
@@ -108,6 +92,15 @@ export default function Home() {
 
     );
 }
+
+const mapStateToProps = () => ({
+    posts: getPostsFromSelector(),
+    dateOptions: getDateOptions(),
+    user: getUser(),
+    journalName: getJournalName()
+})
+
+export default connect(mapStateToProps, { getPosts })(Home)
 
 const styles = {
     postContainer: {
@@ -144,4 +137,7 @@ const styles = {
         backgroundColor: 'rgb(129, 139, 249)',
         margin: 5
     },
+    pageRedirect: {
+        cursor: 'pointer'
+    }
 }

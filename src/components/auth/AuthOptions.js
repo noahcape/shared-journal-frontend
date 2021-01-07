@@ -1,37 +1,33 @@
 import React, { useContext } from "react"
+import { connect } from 'react-redux'
 import { useHistory } from "react-router-dom"
 import UserContext from "../../context/UserContext"
+import { logOut } from "../../store/actions/userActions"
 
-export default function AuthOptions() {
-    const { userData, setUserData } = useContext(UserContext)
-
+const AuthOptions = ({ logOut }) => {
     const history = useHistory();
+    const { userData, setUserData } = useContext(UserContext)
 
     const userSettings = () => {
         history.push("/user_settings")
     }
 
     const logout = () => {
-        setUserData({
-            token: undefined,
-            user: undefined
-        })
-
+        logOut()
+        setUserData({ token: "", user: "" })
         localStorage.setItem("auth-token", "")
-        // window.location.reload(false)
         history.push("/home")
-
     }
 
     return (
-        userData.user ? (
-            <div style={styles.buttonDiv}>
-                <button style={styles.button} onClick={userSettings}>User Settings</button>
-                <button style={styles.button} onClick={logout}>Log out</button>
-            </div>
-        ) : <></>
+        userData.user ? <div style={styles.buttonDiv}>
+            <button style={styles.button} onClick={userSettings}>User Settings</button>
+            <button style={styles.button} onClick={logout}>Log out</button>
+        </div> : <></>
     )
 }
+
+export default connect(null, { logOut })(AuthOptions)
 
 const styles = {
     buttonDiv: {

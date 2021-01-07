@@ -1,63 +1,35 @@
 import React, { useState, useContext } from "react"
-import UserContext from "../../context/UserContext"
+import { connect } from 'react-redux'
 import { useHistory } from "react-router-dom"
+import UserContext from "../../context/UserContext"
+import { newSettings } from '../../store/actions/settingsActions'
+import { registerUser, loginUser } from '../../store/actions/userActions'
 import { Form, Input, Alert, Button, Card, Typography } from "antd"
-import axios from "axios"
 require("dotenv").config()
 
 const { Text, Title } = Typography
 
-export default function Register({ setSignIn }) {
+const Register = ({ setSignIn, newSettings, registerUser, loginUser }) => {
     const [email, setEmail] = useState()
     const [password, setPassword] = useState()
     const [passwordCheck, setPasswordCheck] = useState()
     const [journalName, setJournalName] = useState()
     const [error, setError] = useState({ msg: '' })
-
     const { setUserData } = useContext(UserContext)
     const history = useHistory()
 
-    const submit = async (e) => {
-        e.preventDefault();
+    const submit = () => {
+        let finalJournalName = journalName + " Journal"
 
-        try {
-            let finalJournalName = journalName + " Journal"
-
-            const newUser = { email, password, passwordCheck, displayName: finalJournalName }
-
-            await axios.post(
-                `https://${process.env.REACT_APP_SERVER}/users/register`,
-                newUser
-            );
-
-            const loginRes = await axios.post(`https://${process.env.REACT_APP_SERVER}/users/login`, {
-                email, password
-            });
-
-            const userID = loginRes.data.user.id
-
-            await axios({
-                url: `https://${process.env.REACT_APP_SERVER}/settings/new`,
-                method: "POST",
-                data: {
-                    displayName: finalJournalName,
-                    sharing_option: "monthly",
-                    recipients: [],
-                    user: userID
-                }
+        const newUser = { email, password, passwordCheck, displayName: finalJournalName }
+        registerUser(newUser).then(() => {
+            loginUser({ email, password }).then(({ token, user }) => {
+                newSettings({ displayName: finalJournalName, recipients: [], user: user.id })
+                setUserData({ token, user })
+                localStorage.setItem("auth-token", token);
+                history.push("/")
             })
-
-            setUserData({
-                token: loginRes.data.token,
-                user: loginRes.data.user
-            });
-
-            localStorage.setItem("auth-token", loginRes.data.token);
-
-            history.push("/")
-        } catch (err) {
-            err.response.data.msg && setError({ ...error, msg: err.response.data.msg });
-        }
+        }).catch(err => setError({ ...error, msg: err.response.data.msg }))
     }
 
     return (
@@ -87,6 +59,8 @@ export default function Register({ setSignIn }) {
         </Card>
     )
 }
+
+export default connect(null, { newSettings, loginUser, registerUser })(Register)
 
 const layout = {
     labelCol: { span: 6 },

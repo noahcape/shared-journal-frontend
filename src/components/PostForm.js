@@ -1,15 +1,16 @@
 import React, { useState } from "react"
+import { connect } from 'react-redux'
 import FormData from "form-data"
+import { newPost } from '../store/actions/postActions'
 import { Button, Card, Input, Typography, Spin, Tooltip } from "antd"
 import { UploadOutlined } from '@ant-design/icons'
-import postAPI from "../API/posts.api"
 import ImagePreview from "./ImagePreview"
 import placeholderImage from "../placeholderImage.png"
 
 const { TextArea } = Input
 const { Text } = Typography
 
-export default function PostForm(props) {
+const PostForm = ({ newPost }) => {
     const today = `${new Date(Date.now()).getFullYear()}-${(new Date(Date.now()).getMonth() + 1 + "").length === 1 ? ((new Date(Date.now()).getMonth() + 1 + "").padStart(2, 0)) : (new Date(Date.now()).getMonth() + 1)}-${(new Date(Date.now()).getDate() + 1 + "").length === 1 ? ((new Date(Date.now()).getDate() + 1 + "").padStart(2, 0)) : (new Date(Date.now()).getDate() + 1)}`
     const [post, setPost] = useState("")
     const [images, setImages] = useState([])
@@ -17,29 +18,24 @@ export default function PostForm(props) {
     const [date, setDate] = useState('')
     const hiddenFileInput = React.useRef(null)
 
-    const handleFileUpload = (event) => {
+    const handleFileUpload = (e) => {
         const uploadedImages = []
-        for (let i = 0; i < event.target.files.length; i++) {
-            uploadedImages.push(event.target.files[i])
+        for (let i = 0; i < e.target.files.length; i++) {
+            uploadedImages.push(e.target.files[i])
         }
         setImages(images.concat(uploadedImages))
     }
 
-    const deleteImage = (image, key, e) => {
-        e.preventDefault()
-
+    const deleteImage = (image, key) => {
         const tempImages = []
-
         for (let i = 0; i < images.length; i++) {
             if (image !== images[i])
                 tempImages.push(images[i])
         }
-
         setImages(tempImages)
-
     }
 
-    const newPost = async () => {
+    const submitPost = () => {
         const data = new FormData()
         const postDate = new Date(date || Date.now())
         data.append("text", post)
@@ -50,14 +46,12 @@ export default function PostForm(props) {
             return data.append("image", image)
         })
         setLoading(true)
-        postAPI.addPost(data).then(() => {
+        newPost(data).then(() => {
             setLoading(false)
             setPost("")
             setImages([])
             setDate('')
-            props.setReload(!props.reload)
         })
-
     }
 
     return (
@@ -88,7 +82,7 @@ export default function PostForm(props) {
                             <input style={styles.dateInput} type='date' value={date || today} onChange={(e) => setDate(e.target.value)} />
                         </div>
                         <Tooltip title={post.length === 0 ? ("Your post must have text") : ''}>
-                            <Button style={styles.submitButton} disabled={post.length === 0} onClick={newPost}>Submit</Button>
+                            <Button style={styles.submitButton} disabled={post.length === 0} onClick={submitPost}>Submit</Button>
                         </Tooltip>
                     </div>
                 </Card>
@@ -96,7 +90,8 @@ export default function PostForm(props) {
         </div>
     )
 }
-//  <PostFormModal post={post} images={images} handleChange={handleChange} newPost={newPost} deleteImage={deleteImage} handleFileUpload={handleFileUpload} setDate={setDate} date={date} />
+
+export default connect(null, { newPost })(PostForm)
 
 const styles = {
     cardForm: {

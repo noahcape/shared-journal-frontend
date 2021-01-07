@@ -29,7 +29,7 @@ const Home = () => {
 
     return (
         <Row gutter={[10, 10]} style={styles.row}>
-            <Col span={10}>
+            <Col span={13}>
                 <Title>Welcome to Shared-Journal</Title>
                 <Text>Here you can create a journal and we will take care of sharing your moments with your closest friends and family.</Text>
             </Col>

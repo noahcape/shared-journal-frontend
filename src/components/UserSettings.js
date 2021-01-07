@@ -1,81 +1,31 @@
 import React, { useState, useEffect } from "react"
-import axios from "axios"
+import { connect } from 'react-redux'
+import { deleteRecipient, editJournalName, clearRecipients, getSettings } from '../store/actions/settingsActions'
 import { Collapse, Typography, Tag, Button, Popconfirm, Input, Form, Alert } from 'antd';
 import { EditOutlined } from '@ant-design/icons'
 import RecipientAddModal from './RecipientAddModal'
+import { getSettingsFromSelector } from "../store/selectors/settingsSelector";
 
 const { Panel } = Collapse;
 const { Text, Paragraph } = Typography
 require("dotenv").config()
 
-export default function UserSettings() {
-    const [settings, setSettings] = useState()
+const UserSettings = ({ settings, deleteRecipient, editJournalName, clearRecipients, getSettings }) => {
     const [journalName, setJournalName] = useState()
     const [error, setError] = useState({ msg: '' })
     const [editName, setEditName] = useState(false)
 
     useEffect(() => {
-        let isCancelled = false
-
-        const getSettings = async () => {
-            const res = await axios({
-                url: `https://${process.env.REACT_APP_SERVER}/settings/get`,
-                method: "get",
-                headers: { "x-auth-token": localStorage.getItem("auth-token") }
-
-            })
-
-            if (!isCancelled) setSettings(res.data)
-        }
-
         getSettings()
+    }, [getSettings])
 
-        return (() => { return isCancelled = true })
+    const editJournalNameHandler = () => {
+        if (journalName === "") { return setError("Your journal Name cannot be left empty") }
 
-    })
-
-    const deleteRecipient = async (e, recipient) => {
-        e.preventDefault();
-
-        await axios({
-            url: `https://${process.env.REACT_APP_SERVER}/settings/delete_recipient`,
-            method: "delete",
-            headers: { "x-auth-token": localStorage.getItem("auth-token") },
-            data: {
-                recipient
-            }
-        })
-
-    }
-
-    const editJournalName = async (e) => {
-        e.preventDefault()
-
-        if (journalName === "") {
-            return setError("Your journal Name cannot be left empty")
-        }
-
-        try {
-            await axios({
-                url: `https://${process.env.REACT_APP_SERVER}/settings/edit_name?journalName=${journalName}`,
-                method: "PUT",
-                headers: { "x-auth-token": localStorage.getItem("auth-token") }
-            })
-
+        editJournalName(journalName).then(() => {
             setEditName(false)
             setError({ ...error, msg: '' })
-        } catch (err) {
-            err.response.data && err.response.data.msg && setError({ ...error, msg: err.response.data.msg })
-        }
-
-    }
-
-    const deleteAll = async () => {
-        await axios({
-            url: `https://${process.env.REACT_APP_SERVER}/settings/clear_recipients`,
-            method: 'PUT',
-            headers: { "x-auth-token": localStorage.getItem("auth-token") }
-        })
+        }).catch((e) => setError({ ...error, msg: e.response.data.msg }))
     }
 
     return (
@@ -90,8 +40,8 @@ export default function UserSettings() {
                                 <Input value={journalName} onChange={(e) => setJournalName(e.target.value)} />
                             </Form.Item>
                             <Form.Item>
-                                <Button style={styles.journalNameButtons} rounded onClick={() => { setEditName(false); setJournalName(settings.journal_name) }}>Cancel</Button>
-                                <Button style={styles.journalNameButtons} type='primary' rounded onClick={(e) => editJournalName(e)}>Submit</Button>
+                                <Button style={styles.journalNameButtons} onClick={() => { setEditName(false); setJournalName(settings.journal_name) }}>Cancel</Button>
+                                <Button style={styles.journalNameButtons} type='primary' onClick={() => editJournalNameHandler()}>Submit</Button>
                             </Form.Item>
                         </Form>
                     ) : (
@@ -113,11 +63,11 @@ export default function UserSettings() {
                         {settings && settings.recipients.map((recipient, index) => {
                             return <Tag style={styles.recipientTag} key={index}>
                                 <Text style={styles.recipientName}>{recipient}</Text>
-                                <Button type='text' shape='circle' onClick={(e) => deleteRecipient(e, recipient)}>x</Button>
+                                <Button type='text' shape='circle' onClick={(e) => deleteRecipient(recipient)}>x</Button>
                             </Tag>
                         })}
                     </div>}
-                    <Popconfirm title="Are you sure you want to delete your entire recipient list?" onConfirm={deleteAll} okText="Yes" cancelText="No">
+                    <Popconfirm title="Are you sure you want to delete your entire recipient list?" onConfirm={() => clearRecipients()} okText="Yes" cancelText="No">
                         {settings && settings.recipients.length > 0 && <Button danger>Delete All</Button>}
                     </Popconfirm>
                 </Panel>
@@ -125,6 +75,12 @@ export default function UserSettings() {
         </div>
     )
 }
+
+const mapStateToProps = () => ({
+    settings: getSettingsFromSelector()
+})
+
+export default connect(mapStateToProps, { deleteRecipient, editJournalName, clearRecipients, getSettings })(UserSettings)
 
 const styles = {
     startBulkAdd: {

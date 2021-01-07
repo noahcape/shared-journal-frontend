@@ -1,40 +1,20 @@
 import React, { useState, useEffect } from "react";
-import postsAPI from "../API/posts.api"
+import { connect } from 'react-redux'
 import PublicViewPost from "./PublicViewPost"
 import "../publicView.css"
+import { getPostsFromSelector, getDateOptions, getPostsBy } from "../store/selectors/postSelector";
+import { publicGetPosts } from "../store/actions/postActions"
 
-const PublicView = (props) => {
-    const [posts, setPosts] = useState()
-    const [dateOptions, setDateOptions] = useState({})
+const PublicView = (props, { posts, dateOptions, publicGetPosts }) => {
     const [month, setMonth] = useState()
     const [year, setYear] = useState()
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
     const isMobile = window.innerWidth < 435
 
     useEffect(() => {
-        let isCancelled = false;
-
-        const getPosts = async () => {
-            await postsAPI.publicGetPosts(props.match.params.journalName, month, year).then(res => {
-                if (!isCancelled) {
-                    setPosts(res.data)
-                }
-            })
-        }
-
-        const getDateOptions = async () => {
-            await postsAPI.publicGetDateOptions(props.match.params.journalName).then(res => {
-                if (!isCancelled) {
-                    setDateOptions(res.data)
-                }
-            })
-        }
-
-        getPosts()
-        getDateOptions()
-
-        return () => isCancelled = false
-    }, [year, month, props.match.params.journalName])
+        localStorage.setItem("auth-token", "")
+        publicGetPosts(props.match.params.journalName)
+    }, [publicGetPosts, props.match.params.journalName])
 
     const renderDateOptions = () => {
         return dateOptions && Object.keys(dateOptions).map((year, index) => {
@@ -52,9 +32,17 @@ const PublicView = (props) => {
         })
     }
 
-    const renderPosts = () => {
+    const renderAllPosts = () => {
         return posts && posts.map((post, index) => {
             return <div style={styles.postContainer} key={index} >
+                <PublicViewPost post={post} />
+            </div>
+        })
+    }
+
+    const renderPostsFromDate = () => {
+        return getPostsBy(month, year).map((post, index) => {
+            return <div style={styles.postContainer} key={index}>
                 <PublicViewPost post={post} />
             </div>
         })
@@ -64,8 +52,8 @@ const PublicView = (props) => {
         const vars = e.target.value.split(",")
 
         if (vars[0] === "undefined") {
-            setMonth(undefined)
-            setYear(undefined)
+            setMonth('')
+            setYear('')
         } else {
             setMonth(parseInt(vars[0]))
             setYear(parseInt(vars[1]))
@@ -87,12 +75,17 @@ const PublicView = (props) => {
                 </div>
             </div>
             <span className="public-view-post-header">{!year ? (<h1>All Posts</h1>) : (<h1>{`Posts from ${months[month]} ${year}`}</h1>)}</span>
-            {renderPosts()}
+            {!month && !year ? renderAllPosts() : renderPostsFromDate() }
         </div>
     )
 }
 
-export default PublicView;
+const mapStateToProps = () => ({
+    post: getPostsFromSelector(),
+    dateOptions: getDateOptions()
+})
+
+export default connect(mapStateToProps, { publicGetPosts })(PublicView)
 
 const styles = {
     postContainer: {

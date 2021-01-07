@@ -1,117 +1,57 @@
-import React from "react"
+import React, { useState } from "react"
 import { Card, Popconfirm } from 'antd'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
+import { connect } from "react-redux"
+import { deletePost } from '../store/actions/postActions'
 
-class PostRead extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            counter: 0,
-            images: this.props.post.images,
-            zoomImage: false,
-            isMobile: window.innerWidth < 435
-        }
+const PostRead = ({ post, deletePost, changeEditState }) => {
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    const [counter, setCounter] = useState(0)
+    const [images] = useState(post.images)
+    const [zoomImage, setZoomImage] = useState(false)
+    const isMobile = window.innerWidth < 435
 
-        this.update = true
-        this.incrementCounter = this.incrementCounter.bind(this)
-        this.decrementCounter = this.decrementCounter.bind(this)
-        this.renderImage = this.renderImage.bind(this)
-        this.getDate = this.getDate.bind(this)
-        this.zoom = this.zoom.bind(this)
-    }
-
-    componentDidMount() {
-        if (this.update) {
-            this.setState({
-                images: this.props.post.images
-            })
-        }
-    }
-
-    componentWillUnmount() {
-        this.update = false
-    }
-
-    zoom = () => {
-        this.setState({
-            zoomImage: !this.state.zoomImage
+    const renderImage = () => {
+        return images.map((image, index) => {
+            return (
+                <img style={zoomImage ? (index === counter ? (styles.imageScrollZoomActive) : (styles.imageScrollZoom)) : (index === counter ? (styles.imageScrollNonZoomActive) : (styles.imageScrollNonZoom))} src={image} alt={image} key={index} onClick={() => setZoomImage(!zoomImage)} />
+            )
         })
     }
 
-    renderImage = () => {
-        return (
-            this.state.images.map((image, index) => {
-                return (
-                    <img style={this.state.zoomImage ? (index === this.state.counter ? (styles.imageScrollZoomActive) : (styles.imageScrollZoom)) : (index === this.state.counter ? (styles.imageScrollNonZoomActive) : (styles.imageScrollNonZoom))} src={image} alt={image} key={index} onClick={() => this.zoom()} />
-                )
-            })
-        )
-    }
+    const getDate = () => {
+        const date = new Date(post.date)
 
-    incrementCounter = () => {
-        if (this.state.counter === this.state.images.length - 1) {
-            this.setState({
-                counter: 0
-            })
-        } else {
-            this.setState({
-                counter: this.state.counter + 1
-            })
-        }
-
-    }
-
-    decrementCounter = () => {
-        if (this.state.counter === 0) {
-            this.setState({
-                counter: this.state.images.length - 1
-            })
-        } else {
-            this.setState({
-                counter: this.state.counter - 1
-            })
-        }
-    }
-
-    getDate = () => {
-        const date = new Date(this.props.post.date)
-
-        if (date.getTimezoneOffset() > 0) {
-            date.setTime(date.getTime() + date.getTimezoneOffset() * 60 * 1000);
-        }
-
-        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+        if (date.getTimezoneOffset() > 0) { date.setTime(date.getTime() + date.getTimezoneOffset() * 60 * 1000) }
 
         return (
             `${date.getDate()} ~ ${months[date.getMonth()]} ~ ${date.getFullYear()}`
         )
     }
 
-    render() {
-        return (
-            <Card style={!this.state.isMobile ? styles.postStyle : {}} actions={[
-                <EditOutlined key='edit' onClick={() => this.props.changeEditState()} />,
-                <Popconfirm title="Are you sure to delete this post?" onConfirm={() => this.props.deletePost()} okText="Yes" cancelText="No">
-                    <DeleteOutlined key='delete' />
-                </Popconfirm>
-            ]}>
-                {this.state.images && this.props.post.images.length > 1 ? (
-                    <div style={styles.imageScrollContainer}>
-                        <button style={styles.imageScrollControlsLeft} onClick={this.decrementCounter}>{"<"}</button>
-                        {this.renderImage()}
-                        <button style={styles.imageScrollControlsRight} onClick={this.incrementCounter}>{">"}</button>
-                    </div>
-                ) : (
-                        this.state.images && this.props.post.images[0] && <img style={this.state.zoomImage ? (styles.imageZoom) : (styles.imageNonZoom)} src={this.props.post.images[0]} alt="preview" onClick={() => this.zoom()} />
-                    )}
-                <p style={styles.postText}>{this.props.post.text}</p>
-                <p style={styles.postDate}>{this.getDate()}</p>
-            </Card>
-        )
-    }
+    return (
+        <Card style={!isMobile ? styles.postStyle : {}} actions={[
+            <EditOutlined key='edit' onClick={() => changeEditState()} />,
+            <Popconfirm title="Are you sure to delete this post?" onConfirm={() => deletePost(post._id)} okText="Yes" cancelText="No">
+                <DeleteOutlined key='delete' />
+            </Popconfirm>
+        ]}>
+            {images && post.images.length > 1 ? (
+                <div style={styles.imageScrollContainer}>
+                    <button style={styles.imageScrollControlsLeft} onClick={() => { counter === 0 ? setCounter(images.length - 1) : setCounter(counter - 1) }}>{"<"}</button>
+                    {renderImage()}
+                    <button style={styles.imageScrollControlsRight} onClick={() => { counter === images.length - 1 ? setCounter(0) : setCounter(counter + 1) }}>{">"}</button>
+                </div>
+            ) : (
+                    images && post.images[0] && <img style={zoomImage ? (styles.imageZoom) : (styles.imageNonZoom)} src={post.images[0]} alt="preview" onClick={() => setZoomImage(!zoomImage)} />
+                )}
+            <p style={styles.postText}>{post.text}</p>
+            <p style={styles.postDate}>{getDate()}</p>
+        </Card>
+    )
 }
 
-export default PostRead
+export default connect(null, { deletePost })(PostRead)
 
 const styles = {
     postStyle: {
