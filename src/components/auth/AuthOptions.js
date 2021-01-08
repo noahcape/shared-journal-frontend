@@ -2,11 +2,13 @@ import React, { useContext } from "react"
 import { connect } from 'react-redux'
 import { useHistory } from "react-router-dom"
 import UserContext from "../../context/UserContext"
+import VisitorContext from '../../context/VisitorContext'
 import { logOut } from "../../store/actions/userActions"
 
 const AuthOptions = ({ logOut }) => {
     const history = useHistory();
     const { userData, setUserData } = useContext(UserContext)
+    const [visitor] = useContext(VisitorContext)
 
     const userSettings = () => {
         history.push("/user_settings")
@@ -20,7 +22,7 @@ const AuthOptions = ({ logOut }) => {
     }
 
     return (
-        userData.user ? <div style={styles.buttonDiv}>
+        userData.user && !visitor ? <div style={styles.buttonDiv}>
             <button style={styles.button} onClick={userSettings}>User Settings</button>
             <button style={styles.button} onClick={logout}>Log out</button>
         </div> : <></>

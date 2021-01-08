@@ -19,10 +19,10 @@ const Login = ({ setSignIn, loginUser }) => {
         const loginData = { email, password }
         try {
             const loginRes = await loginUser(loginData)
-            setUserData({token: loginRes.token, user: loginRes.user})
+            setUserData({ token: loginRes.token, user: loginRes.user, visitor: false })
             localStorage.setItem("auth-token", loginRes.token)
             history.push('/')
-        } catch(e) {
+        } catch (e) {
             e.response.data && e.response.data.msg && setError({ ...error, msg: e.response.data.msg })
         }
     }

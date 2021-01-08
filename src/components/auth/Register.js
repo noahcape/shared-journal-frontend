@@ -25,7 +25,7 @@ const Register = ({ setSignIn, newSettings, registerUser, loginUser }) => {
         registerUser(newUser).then(() => {
             loginUser({ email, password }).then(({ token, user }) => {
                 newSettings({ displayName: finalJournalName, recipients: [], user: user.id })
-                setUserData({ token, user })
+                setUserData({ token, user, visitor: false })
                 localStorage.setItem("auth-token", token);
                 history.push("/")
             })

@@ -9,6 +9,7 @@ import { getSettings } from './store/actions/settingsActions'
 import { getUser } from './store/actions/userActions'
 import isLoggedIn from "./functions/isLoggedIn"
 import UserContext from "./context/UserContext"
+import VisitorContext from "./context/VisitorContext"
 import PrivateRoute from "./components/auth/PrivateRoute"
 import Header from "./components/layout/Header"
 import Home from "./components/Home"
@@ -26,6 +27,7 @@ const App = ({ getPosts, getSettings, getUser, journalName }) => {
     token: undefined,
     user: undefined
   });
+  const [visitor, setVisitor] = useState(false)
   const token = localStorage.getItem("auth-token")
   const [isMobile] = useState(window.innerWidth < 435);
 
@@ -48,18 +50,20 @@ const App = ({ getPosts, getSettings, getUser, journalName }) => {
     <Layout style={styles.applicationContainer}>
       <BrowserRouter>
         <UserContext.Provider value={{ userData, setUserData }}>
-          <Header />
-          <Content style={!isMobile ? ({ margin: '0 150px' }) : ({ margin: 0 })}>
-            <div style={isMobile ? styles.applicationLayoutContentMobile : styles.applicationLayoutContentWeb}>
-              <Switch>
-                <PrivateRoute path="/user_settings" component={UserSettings} />
-                <Route path="/home" component={PublicHome} />
-                <Route path="/visitor/:journalName" component={PublicView} />
-                <PrivateRoute path="/" component={Home} />
-              </Switch>
-            </div>
-          </Content>
-          <Footer style={styles.applicationFooter}>Shared Journal <img src={logo} alt='logo' style={styles.applicationLogo} /> Created by Noah Cape</Footer>
+          <VisitorContext.Provider value={[visitor, setVisitor]}>
+            <Header />
+            <Content style={!isMobile ? ({ margin: '0 150px' }) : ({ margin: 0 })}>
+              <div style={isMobile ? styles.applicationLayoutContentMobile : styles.applicationLayoutContentWeb}>
+                <Switch>
+                  <PrivateRoute path="/user_settings" component={UserSettings} />
+                  <Route path="/home" component={PublicHome} />
+                  <Route path="/visitor/:journalName" component={PublicView} />
+                  <PrivateRoute path="/" component={Home} />
+                </Switch>
+              </div>
+            </Content>
+            <Footer style={styles.applicationFooter}>Shared Journal <img src={logo} alt='logo' style={styles.applicationLogo} /> Created by Noah Cape</Footer>
+          </VisitorContext.Provider>
         </UserContext.Provider>
       </BrowserRouter>
     </Layout>

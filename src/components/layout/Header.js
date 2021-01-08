@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useContext } from "react"
 import { Link } from "react-router-dom"
 import AuthOptions from "../auth/AuthOptions"
+import VisitorContext from '../../context/VisitorContext'
 import logo from "../../favicon.ico"
 import { Typography } from 'antd'
 import isLoggedIn from "../../functions/isLoggedIn"
@@ -8,6 +9,7 @@ import isLoggedIn from "../../functions/isLoggedIn"
 const { Title } = Typography
 
 const Header = () => {
+    const [visitor] = useContext(VisitorContext)
     const [isAuthorized, setIsAuthorized] = useState(false)
     const [isMobile] = useState(window.innerWidth < 435);
 
@@ -24,6 +26,17 @@ const Header = () => {
 
         return () => isCancelled = true
     })
+
+    if (visitor) {
+        return (
+            <div style={styles.navBar}>
+                <div style={styles.brandInfo}>
+                    <img src={logo} style={styles.brandLogo} alt='shared-journal logo' />
+                    {!isMobile ? <Title style={styles.brandText}>Shared Journal</Title> : <Title style={styles.brandText}>SJ</Title>}
+                </div>
+            </div>
+        )
+    }
 
     return (
         <div style={styles.navBar}>

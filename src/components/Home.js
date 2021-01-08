@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { connect } from 'react-redux'
+import { Typography } from 'antd'
 import PostForm from "../components/PostForm";
 import PostEditHandler from "./PostEditHandler"
 import { getPosts } from '../store/actions/postActions'
 import { getPostsFromSelector, getDateOptions, getPostsBy } from "../store/selectors/postSelector";
 import { getUser, getJournalName } from "../store/selectors/userDataSelector";
+
+const { Title } = Typography
 
 const Home = ({ posts, dateOptions, user, journalName, getPosts }) => {
     const [month, setMonth] = useState('')
@@ -29,7 +32,8 @@ const Home = ({ posts, dateOptions, user, journalName, getPosts }) => {
     }
 
     const openVisitorPage = () => {
-        const url = `https://sharedjournal.capefamily.org/visitor/${journalName.replace(" ", "_")}`;
+        // const url = `https://sharedjournal.capefamily.org/visitor/${journalName.replace(" ", "_")}`;
+        const url = `http://localhost:3000/visitor/${journalName.replace(" ", "_")}`;
         window.open(url, '_blank');
     }
 
@@ -81,7 +85,7 @@ const Home = ({ posts, dateOptions, user, journalName, getPosts }) => {
                         </span>}
                     </div>
 
-                    <div className="home-post-title">{!year ? (posts.length > 0 && <h1>All Posts</h1>) : (<h1>{`Posts from ${months[month]} ${year}`}</h1>)}</div>
+                    <div className="home-post-title">{!year ? (posts.length > 0 && <Title level={2}>Your Posts</Title>) : (<h1>{`Posts from ${months[month]} ${year}`}</h1>)}</div>
 
                     {!month && !year ? renderAllPosts() : renderPostsFromDate()}
                 </>

@@ -1,19 +1,21 @@
 import React, { useState } from "react"
-import { Card } from 'antd'
-// import { SmileTwoTone, SmileOutlined } from '@ant-design/icons'
+import { connect } from 'react-redux'
+import { likePost } from '../store/actions/postActions'
+import { Card, Popconfirm, Input, Tooltip } from 'antd'
+import { SmileTwoTone, SmileOutlined } from '@ant-design/icons'
 
-const PublicViewPost = (props) => {
+const PublicViewPost = ({ post, likePost }) => {
     const [zoomImage, setZoomImage] = useState(false)
+    const [msg, setMsg] = useState('')
     const [counter, setCounter] = useState(0)
     const [isMobile] = useState(window.innerWidth < 435)
-    // const [likes, setLikes] = useState(Math.floor(1 + Math.random() * (7 - 1)))
 
     const zoom = () => {
         setZoomImage(!zoomImage)
     }
 
     const incrementCounter = () => {
-        if (counter === props.post.images.length - 1) {
+        if (counter === post.images.length - 1) {
             setCounter(0)
         } else {
             setCounter(counter + 1)
@@ -22,14 +24,14 @@ const PublicViewPost = (props) => {
 
     const decrementCounter = () => {
         if (counter === 0) {
-            setCounter(props.post.images.legnth - 1)
+            setCounter(post.images.legnth - 1)
         } else {
             setCounter(counter - 1)
         }
     }
 
     const getDate = () => {
-        const date = new Date(props.post.date)
+        const date = new Date(post.date)
 
         if (date.getTimezoneOffset() > 0) {
             date.setTime(date.getTime() + date.getTimezoneOffset() * 60 * 1000);
@@ -43,7 +45,7 @@ const PublicViewPost = (props) => {
     }
 
     const renderImages = () => {
-        return props.post.images.map((image, index) => {
+        return post.images.map((image, index) => {
             return (
                 <img style={zoomImage ? (index === counter ? (styles.imageScrollZoomActive) : (styles.imageScrollZoom)) : (index === counter ? (styles.imageScrollNonZoomActive) : (styles.imageScrollNonZoom))} src={image} alt={index} onClick={zoom} key={index} />
             )
@@ -51,8 +53,14 @@ const PublicViewPost = (props) => {
     }
 
     return (
-        <Card style={!isMobile ? styles.postStyle : {}}>
-            {props.post.images.length > 1 ? (
+        <Card style={!isMobile ? styles.postStyle : {}} actions={[
+            <Popconfirm title={<Input value={msg} placeholder='share a message' onChange={(e) => setMsg(e.target.value)} />} onConfirm={() => likePost(post._id, msg)} okText="Send Like" cancelText="Cancel" icon={<SmileTwoTone twoToneColor='rgb(205, 220, 250)' style={{ fontSize: 20 }} />}>
+                <Tooltip title="Add a like and message to this post" placement='bottom'>
+                    <SmileOutlined />
+                </Tooltip>
+            </Popconfirm>
+        ]}>
+            {post.images.length > 1 ? (
                 <div className="post-info">
                     <div style={styles.imageScrollContainer}>
                         <button style={styles.imageScrollControlsLeft} onClick={decrementCounter}>{"<"}</button>
@@ -61,16 +69,20 @@ const PublicViewPost = (props) => {
                     </div>
                 </div>
             ) : (
-                    props.post.images.length !== 0 && <img style={zoomImage ? styles.imageZoom : styles.imageNonZoom} src={props.post.images[0]} alt="preview" onClick={zoom} />
+                    post.images.length !== 0 && <img style={zoomImage ? styles.imageZoom : styles.imageNonZoom} src={post.images[0]} alt="preview" onClick={zoom} />
                 )}
-            <p style={styles.postText}>{props.post.text}</p>
+            <p style={styles.postText}>{post.text}</p>
             <p style={styles.postDate}>{getDate()}</p>
-            {/* {likes > 0 && Array(likes).fill(1).map((i, index) => { return <SmileTwoTone twoToneColor='rgb(84, 177, 227)' key={index} style={styles.like} /> })} */}
+            {post.likes.length > 0 && post.likes.map((msg, index) => {
+                return <Tooltip title={msg} key={index}>
+                    <SmileTwoTone twoToneColor='rgb(205, 220, 250)' style={styles.like} />
+                </Tooltip>
+            })}
         </Card>
     )
 }
 
-export default PublicViewPost;
+export default connect(null, { likePost })(PublicViewPost);
 
 const styles = {
     like: {

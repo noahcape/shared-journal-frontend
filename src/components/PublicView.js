@@ -1,20 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { connect } from 'react-redux'
+import VisitorContext from '../context/VisitorContext'
 import PublicViewPost from "./PublicViewPost"
 import "../publicView.css"
 import { getPostsFromSelector, getDateOptions, getPostsBy } from "../store/selectors/postSelector";
 import { publicGetPosts } from "../store/actions/postActions"
 
-const PublicView = (props, { posts, dateOptions, publicGetPosts }) => {
+const PublicView = ({ posts, dateOptions, publicGetPosts, match }) => {
+    const [ , setVisitor] = useContext(VisitorContext)
     const [month, setMonth] = useState()
     const [year, setYear] = useState()
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
     const isMobile = window.innerWidth < 435
 
     useEffect(() => {
-        localStorage.setItem("auth-token", "")
-        publicGetPosts(props.match.params.journalName)
-    }, [publicGetPosts, props.match.params.journalName])
+        setVisitor(true)
+        publicGetPosts(match.params.journalName)
+    }, [setVisitor, publicGetPosts, match.params.journalName])
 
     const renderDateOptions = () => {
         return dateOptions && Object.keys(dateOptions).map((year, index) => {
@@ -64,7 +66,7 @@ const PublicView = (props, { posts, dateOptions, publicGetPosts }) => {
         <div>
             <div style={isMobile ? (styles.userOptionsMobile) : (styles.userOptionsWeb)}>
                 <div>
-                    <h1 style={{ color: 'white', padding: 0, margin: 0 }}>{props.match.params && props.match.params.journalName.split("_").join(" ")}</h1>
+                    <h1 style={{ color: 'white', padding: 0, margin: 0 }}>{match.params && match.params.journalName.split("_").join(" ")}</h1>
                 </div>
                 <div style={styles.userOptionsDiv}>
                     See posts from
@@ -75,13 +77,13 @@ const PublicView = (props, { posts, dateOptions, publicGetPosts }) => {
                 </div>
             </div>
             <span className="public-view-post-header">{!year ? (<h1>All Posts</h1>) : (<h1>{`Posts from ${months[month]} ${year}`}</h1>)}</span>
-            {!month && !year ? renderAllPosts() : renderPostsFromDate() }
+            {!month && !year ? renderAllPosts() : renderPostsFromDate()}
         </div>
     )
 }
 
 const mapStateToProps = () => ({
-    post: getPostsFromSelector(),
+    posts: getPostsFromSelector(),
     dateOptions: getDateOptions()
 })
 

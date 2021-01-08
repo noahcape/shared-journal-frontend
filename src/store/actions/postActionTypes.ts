@@ -14,6 +14,7 @@ export type PostType = {
     month: number,
     year: number,
     user: string,
+    likes?: number,
     _id: string
 }
 

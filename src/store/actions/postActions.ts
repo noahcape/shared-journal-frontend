@@ -124,3 +124,23 @@ export const deletePost = (id: string) => async (dispatch: Dispatch<PostDispatch
         })
     }
 }
+
+export const likePost = (id: string, message: string) => async (dispatch: Dispatch<PostDispatchTypes>) => {
+    dispatch({
+        type: POST_LOADING
+    })
+
+    const res = await axios({
+        url: `${process.env.REACT_APP_BACKEND}/api/posts/like_post`,
+        method: 'PUT',
+        data: {
+            id,
+            message
+        }
+    })
+
+    dispatch({
+        type: EDIT_POST_SUCCESS,
+        payload: res.data
+    })
+}

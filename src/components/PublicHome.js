@@ -8,7 +8,7 @@ import Register from "./auth/Register"
 const { Text, Title } = Typography
 
 const Home = () => {
-    const [signIn, setSignIn] = React.useState(false)
+    const [signIn, setSignIn] = React.useState(true)
     const history = useHistory()
 
     useEffect(() => {
