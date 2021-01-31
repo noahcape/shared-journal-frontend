@@ -32,8 +32,8 @@ const Home = ({ posts, dateOptions, user, journalName, getPosts }) => {
     }
 
     const openVisitorPage = () => {
-        // const url = `https://sharedjournal.capefamily.org/visitor/${journalName.replace(" ", "_")}`;
-        const url = `http://localhost:3000/visitor/${journalName.replace(" ", "_")}`;
+        const url = `https://sharedjournal.capefamily.org/visitor/${journalName.replace(" ", "_")}`;
+        // const url = `http://localhost:3000/visitor/${journalName.replace(" ", "_")}`;
         window.open(url, '_blank');
     }
 
