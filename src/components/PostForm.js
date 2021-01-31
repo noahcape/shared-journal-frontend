@@ -26,7 +26,7 @@ const PostForm = ({ newPost }) => {
         setImages(images.concat(uploadedImages))
     }
 
-    const deleteImage = (image, key) => {
+    const deleteImage = (image, key, index) => {
         const tempImages = []
         for (let i = 0; i < images.length; i++) {
             if (image !== images[i])

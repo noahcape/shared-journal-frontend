@@ -1,8 +1,10 @@
 import React, { useState } from "react"
-import { Card, Popconfirm } from 'antd'
+import { Card, Popconfirm, Typography } from 'antd'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { connect } from "react-redux"
 import { deletePost } from '../store/actions/postActions'
+
+const { Text, Paragraph } = Typography
 
 const PostRead = ({ post, deletePost, changeEditState }) => {
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
@@ -36,16 +38,14 @@ const PostRead = ({ post, deletePost, changeEditState }) => {
                 <DeleteOutlined key='delete' />
             </Popconfirm>
         ]}>
-            {images && post.images.length > 1 ? (
-                <div style={styles.imageScrollContainer}>
-                    <button style={styles.imageScrollControlsLeft} onClick={() => { counter === 0 ? setCounter(images.length - 1) : setCounter(counter - 1) }}>{"<"}</button>
-                    {renderImage()}
-                    <button style={styles.imageScrollControlsRight} onClick={() => { counter === images.length - 1 ? setCounter(0) : setCounter(counter + 1) }}>{">"}</button>
-                </div>
-            ) : (
-                    images && post.images[0] && <img style={zoomImage ? (styles.imageZoom) : (styles.imageNonZoom)} src={post.images[0]} alt="preview" onClick={() => setZoomImage(!zoomImage)} />
-                )}
-            <p style={styles.postText}>{post.text}</p>
+            {images && <div style={styles.imageScrollContainer}>
+                {post.images.length > 1 && <button style={styles.imageScrollControlsLeft} onClick={() => { counter === 0 ? setCounter(images.length - 1) : setCounter(counter - 1) }}>{"<"}</button>}
+                {renderImage()}
+                {post.images.length > 1 && <button style={styles.imageScrollControlsRight} onClick={() => { counter === images.length - 1 ? setCounter(0) : setCounter(counter + 1) }}>{">"}</button>}
+            </div>}
+            <Paragraph style={styles.postText}>
+                <Text>{post.text}</Text>
+            </Paragraph>
             <p style={styles.postDate}>{getDate()}</p>
         </Card>
     )

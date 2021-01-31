@@ -6,6 +6,7 @@ class ImagePreview extends React.Component {
         super(props);
         this.state = {
             images: this.props.images,
+            newImages: this.props.newImages,
             keys: this.props.post && this.props.post.image_keys,
             counter: 0,
         }
@@ -73,7 +74,7 @@ class ImagePreview extends React.Component {
                 counter: 0
             })
 
-            this.props.deleteImage(this.state.images[i], this.state.keys[i])
+            this.props.deleteImage(this.state.images[i], this.state.keys[i], i)
 
             this.setState({ images: images, keys: keys })
 
@@ -96,16 +97,16 @@ class ImagePreview extends React.Component {
     render() {
         return (
             this.state.images.length > 0 && <div>
-                {this.state.images.length > 1 ? (
+                {/* {this.state.images.length > 1 ? ( */}
                     <div style={styles.imageScrollControlsContainer}>
                         <div style={styles.imageScrollContainer}>
-                            <button onClick={this.decrementCounter} style={styles.imageScrollControls}>{"<"}</button>
+                            {this.state.images.length > 1 && <button onClick={this.decrementCounter} style={styles.imageScrollControls}>{"<"}</button>}
                             {this.renderImage()}
-                            <button onClick={this.incrementCounter} style={styles.imageScrollControls}>{">"}</button>
+                            {this.state.images.length > 1 && <button onClick={this.incrementCounter} style={styles.imageScrollControls}>{">"}</button>}
                         </div>
                         <DeleteOutlined onClick={() => this.handleDelete(this.state.counter)} />
                     </div>
-                ) : (
+                {/* ) : (
                         <div style={styles.imageScrollControlsContainer}>
                             <div style={styles.imageScrollContainer}>
                                 {this.props.post ? (
@@ -117,7 +118,7 @@ class ImagePreview extends React.Component {
                             <DeleteOutlined onClick={() => this.handleDelete(this.state.counter)} />
                         </div>
                     )
-                }
+                } */}
             </div>
         )
     }
