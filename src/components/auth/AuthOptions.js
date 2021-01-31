@@ -1,50 +1,49 @@
 import React, { useContext } from "react"
+import { connect } from 'react-redux'
 import { useHistory } from "react-router-dom"
 import UserContext from "../../context/UserContext"
+import VisitorContext from '../../context/VisitorContext'
+import { logOut } from "../../store/actions/userActions"
 
-export default function AuthOptions() {
-    const { userData, setUserData } = useContext(UserContext)
-
+const AuthOptions = ({ logOut }) => {
     const history = useHistory();
-
-    const register = () => {
-        history.push("/register")
-    }
-
-    const login = () => {
-        history.push("/login")
-    }
+    const { userData, setUserData } = useContext(UserContext)
+    const [visitor] = useContext(VisitorContext)
 
     const userSettings = () => {
         history.push("/user_settings")
     }
 
     const logout = () => {
-        setUserData({
-            token: undefined,
-            user: undefined
-        })
-
+        logOut()
+        setUserData({ token: "", user: "" })
         localStorage.setItem("auth-token", "")
-        window.location.reload(false)
         history.push("/home")
-
     }
 
     return (
-        <nav className="auth-options">
-            {userData.user ? (
-                <>
-                <button onClick={userSettings}>User Settings</button>
-                <button onClick={logout}>Log out</button>
-                </>
-            ) : (
-                <>
-                    <button onClick={register}>Register</button>
-                    <button onClick={login}>Log in</button>
-                </>
-            )}
-
-        </nav>
+        userData.user && !visitor ? <div style={styles.buttonDiv}>
+            <button style={styles.button} onClick={userSettings}>User Settings</button>
+            <button style={styles.button} onClick={logout}>Log out</button>
+        </div> : <></>
     )
+}
+
+export default connect(null, { logOut })(AuthOptions)
+
+const styles = {
+    buttonDiv: {
+        display: 'flex'
+    },
+    button: {
+        height: '50px',
+        backgroundColor: 'rgb(47, 88, 183)',
+        color: 'rgb(245, 245, 245)',
+        alignItems: 'center',
+        border: 'none',
+        cursor: 'pointer',
+        outline: 'none',
+        fontSize: 15,
+        padding: '0 10px 0 10px'
+    }
 }

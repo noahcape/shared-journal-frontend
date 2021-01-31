@@ -1,131 +1,147 @@
-import React from "react"
+import React, { useState } from "react"
+import { Card, Popconfirm, Typography } from 'antd'
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
+import { connect } from "react-redux"
+import { deletePost } from '../store/actions/postActions'
 
-class PostRead extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            counter: 0,
-            images: this.props.post.images,
-            zoomImage: false
-        }
+const { Text, Paragraph } = Typography
 
-        this.update = true
-        this.incrementCounter = this.incrementCounter.bind(this)
-        this.decrementCounter = this.decrementCounter.bind(this)
-        this.renderImage = this.renderImage.bind(this)
-        this.getDate = this.getDate.bind(this)
-        this.zoom = this.zoom.bind(this)
-    }
+const PostRead = ({ post, deletePost, changeEditState }) => {
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    const [counter, setCounter] = useState(0)
+    const [images] = useState(post.images)
+    const [zoomImage, setZoomImage] = useState(false)
+    const isMobile = window.innerWidth < 435
 
-    componentDidMount() {
-        if (this.update) {
-            this.setState({
-                images: this.props.post.images
-            })
-        }
-    }
-
-    componentWillUnmount() {
-        this.update = false
-    }
-
-    zoom = () => {
-        this.setState({
-            zoomImage: !this.state.zoomImage
+    const renderImage = () => {
+        return images.map((image, index) => {
+            return (
+                <img style={zoomImage ? (index === counter ? (styles.imageScrollZoomActive) : (styles.imageScrollZoom)) : (index === counter ? (styles.imageScrollNonZoomActive) : (styles.imageScrollNonZoom))} src={image} alt={image} key={index} onClick={() => setZoomImage(!zoomImage)} />
+            )
         })
     }
 
-    renderImage = () => {
-        return (
-            <span className="image">
-                <button className="backButton" onClick={this.decrementCounter}>{"<"}</button>
-                {this.state.images.map((image, index) => {
-                    let style;
-                    if (this.state.zoomImage) {
-                        style = "zoom-image-scroll"
-                    } else {
-                        style = "image-scroll"
-                    }
+    const getDate = () => {
+        const date = new Date(post.date)
 
-                    if (index === this.state.counter) {
-                        style += "-active"
-                    }
-
-                    return (
-                        <img className={style} src={image} alt={image} key={index} onClick={() => this.zoom()} />
-                    )
-                })}
-                <button className="forwardButton" onClick={this.incrementCounter}>{">"}</button>
-            </span>
-        )
-    }
-
-    incrementCounter = () => {
-        if (this.state.counter === this.state.images.length - 1) {
-            this.setState({
-                counter: 0
-            })
-        } else {
-            this.setState({
-                counter: this.state.counter + 1
-            })
-        }
-
-    }
-
-    decrementCounter = () => {
-        if (this.state.counter === 0) {
-            this.setState({
-                counter: this.state.images.length - 1
-            })
-        } else {
-            this.setState({
-                counter: this.state.counter - 1
-            })
-        }
-    }
-
-    getDate = () => {
-        const date = new Date(this.props.post.date)
-
-        if(date.getTimezoneOffset() > 0){
-            date.setTime( date.getTime() + date.getTimezoneOffset()*60*1000 );
-        }
-
-        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+        if (date.getTimezoneOffset() > 0) { date.setTime(date.getTime() + date.getTimezoneOffset() * 60 * 1000) }
 
         return (
             `${date.getDate()} ~ ${months[date.getMonth()]} ~ ${date.getFullYear()}`
         )
     }
 
-    render() {
-        return (
-            this.state.images ? <>
-                {this.props.post.images.length > 1 ? (
-                    <div className="post-info">
-                        {this.renderImage()}
-                        <p className="post-text">
-                            {this.props.post.text}
-                        </p>
-                    </div>
-                ) : (
-                        this.props.post.images[0] && <div className="post-info">
-                            <div className="image">
-                                <img className={this.state.zoomImage ? ("zoom-image") : ("non-zoom-image")} src={this.props.post.images[0]} alt="preview" onClick={() => this.zoom()} />
-                            </div>
-                            <p className="post-text">
-                                {this.props.post.text}
-                            </p>
-                        </div>
-                    )}
-                {this.props.post.images.length === 0 && <p className="post-text">{this.props.post.text}</p>}
-                <button className="post-read-edit-button" type="button" onClick={() => this.props.changeEditState()}>edit</button>
-                <button className="post-read-delete-button" type="button" onClick={() => this.props.deletePost()}>delete</button>
-                <p className="date">{this.getDate()}</p>
-            </> : <></>
-        )
-    }
+    return (
+        <Card style={!isMobile ? styles.postStyle : {}} actions={[
+            <EditOutlined key='edit' onClick={() => changeEditState()} />,
+            <Popconfirm title="Are you sure to delete this post?" onConfirm={() => deletePost(post._id)} okText="Yes" cancelText="No">
+                <DeleteOutlined key='delete' />
+            </Popconfirm>
+        ]}>
+            {images && <div style={styles.imageScrollContainer}>
+                {post.images.length > 1 && <button style={styles.imageScrollControlsLeft} onClick={() => { counter === 0 ? setCounter(images.length - 1) : setCounter(counter - 1) }}>{"<"}</button>}
+                {renderImage()}
+                {post.images.length > 1 && <button style={styles.imageScrollControlsRight} onClick={() => { counter === images.length - 1 ? setCounter(0) : setCounter(counter + 1) }}>{">"}</button>}
+            </div>}
+            <Paragraph style={styles.postText}>
+                <Text>{post.text}</Text>
+            </Paragraph>
+            <p style={styles.postDate}>{getDate()}</p>
+        </Card>
+    )
 }
 
-export default PostRead
+export default connect(null, { deletePost })(PostRead)
+
+const styles = {
+    postStyle: {
+        marginRight: 50,
+        marginLeft: 50,
+    },
+    postText: {
+        whiteSpace: 'pre-wrap',
+        paddingRight: 15,
+    },
+    postDate: {
+        fontSize: 12,
+    },
+    imageNonZoom: {
+        float: 'left',
+        borderRadius: 4,
+        margin: '3px 15px 15px 15px',
+        maxWidth: '25%',
+        maxHeight: 300,
+        width: 'auto',
+        height: 'auto',
+        cursor: 'zoom-in'
+    },
+    imageZoom: {
+        float: 'left',
+        borderRadius: 4,
+        margin: '3px 15px 15px 15px',
+        maxWidth: '45%',
+        maxHeight: 600,
+        width: 'auto',
+        height: 'auto',
+        cursor: 'zoom-out'
+    },
+    imageScrollZoomActive: {
+        position: 'relative',
+        float: 'left',
+        borderRadius: 4,
+        margin: '3px 15px 15px 15px',
+        maxWidth: 600,
+        maxHeight: 600,
+        width: 'auto',
+        height: 'auto',
+        cursor: 'zoom-out'
+    },
+    imageScrollNonZoomActive: {
+        position: 'relative',
+        float: 'left',
+        borderRadius: 4,
+        margin: '3px 15px 15px 15px',
+        maxWidth: 300,
+        maxHeight: 300,
+        width: 'auto',
+        height: 'auto',
+        cursor: 'zoom-in'
+
+    },
+    imageScrollZoom: {
+        opacity: 0,
+        position: 'fixed',
+        float: 'left',
+        width: 0,
+        height: 0,
+    },
+    imageScrollNonZoom: {
+        opacity: 0,
+        position: 'fixed',
+        float: 'left',
+        width: 0,
+        height: 0
+    },
+    imageScrollContainer: {
+        display: 'flex',
+        float: 'left',
+        marginRight: 15
+    },
+    imageScrollControlsRight: {
+        border: 'none',
+        backgroundColor: 'rgb(255, 255, 255)',
+        outline: 'none',
+        cursor: 'pointer',
+        padding: 0,
+        margin: 0
+    },
+    imageScrollControlsLeft: {
+        float: 'left',
+        border: 'none',
+        backgroundColor: 'rgb(255, 255, 255)',
+        outline: 'none',
+        cursor: 'pointer',
+        padding: 0,
+        margin: 0
+    }
+}

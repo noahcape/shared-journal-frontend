@@ -1,143 +1,164 @@
 import React, { useState } from "react"
+import { connect } from 'react-redux'
 import FormData from "form-data"
-import ClimbingBoxLoader from "react-spinners/ClimbingBoxLoader"
-
-import postAPI from "../API/posts.api"
+import { newPost } from '../store/actions/postActions'
+import { Button, Card, Input, Typography, Spin, Tooltip } from "antd"
+import { UploadOutlined } from '@ant-design/icons'
 import ImagePreview from "./ImagePreview"
-import PostFormModal from "./PostFormModal"
+import placeholderImage from "../placeholderImage.png"
 
-export default function PostForm(props) {
+const { TextArea } = Input
+const { Text } = Typography
+
+const PostForm = ({ newPost }) => {
+    const today = `${new Date(Date.now()).getFullYear()}-${(new Date(Date.now()).getMonth() + 1 + "").length === 1 ? ((new Date(Date.now()).getMonth() + 1 + "").padStart(2, 0)) : (new Date(Date.now()).getMonth() + 1)}-${(new Date(Date.now()).getDate() + 1 + "").length === 1 ? ((new Date(Date.now()).getDate() + 1 + "").padStart(2, 0)) : (new Date(Date.now()).getDate() + 1)}`
     const [post, setPost] = useState("")
     const [images, setImages] = useState([])
     const [loading, setLoading] = useState(false)
-    const [compose, setCompose] = useState(true)
     const [date, setDate] = useState('')
+    const hiddenFileInput = React.useRef(null)
 
-    const handleChange = (event) => {
-        setPost(event.target.value)
-    }
-
-    const handleFileUpload = (event) => {
-
-        const images = []
-
-        for (let i = 0; i < event.target.files.length; i++) {
-            images.push(event.target.files[i])
+    const handleFileUpload = (e) => {
+        const uploadedImages = []
+        for (let i = 0; i < e.target.files.length; i++) {
+            uploadedImages.push(e.target.files[i])
         }
-
-        setImages(images)
-
+        setImages(images.concat(uploadedImages))
     }
 
-    const deleteImage = (image, key, e) => {
-        e.preventDefault()
-
+    const deleteImage = (image, key, index) => {
         const tempImages = []
-
         for (let i = 0; i < images.length; i++) {
             if (image !== images[i])
                 tempImages.push(images[i])
         }
-
         setImages(tempImages)
-
     }
 
-    const changeCompose = () => {
-        setCompose(!compose)
-    }
-
-    const newPost = async (e) => {
-        e.preventDefault()
-
-        if (post === "") {
-            return alert("You must include at least a short amount of text")
-        }
-
+    const submitPost = () => {
         const data = new FormData()
-
-        let postDate;
-        date === '' ? (
-            postDate = new Date(Date.now())
-        ) : (
-                postDate = new Date(date)
-            )
-
-        data.append("text", post);
+        const postDate = new Date(date || Date.now())
+        data.append("text", post)
+        data.append('date', postDate)
+        data.append("month", postDate.getMonth())
+        data.append("year", postDate.getFullYear())
         images.map(image => {
             return data.append("image", image)
         })
-        data.append("date", postDate)
-        data.append("month", postDate.getMonth())
-        data.append("year", postDate.getFullYear())
-
         setLoading(true)
-        postAPI.addPost(data).then(() => {
+        newPost(data).then(() => {
             setLoading(false)
-            props.setReload(!props.reload)
+            setPost("")
+            setImages([])
+            setDate('')
         })
-
-        setPost("")
-        setImages([])
-        setDate('')
-
     }
 
     return (
         <div>
-            {loading ? (
-                <div>
-                    <ClimbingBoxLoader color={"black"} css={`margin: 0 auto;`} />
-                    <p className="loading-message">We will be back with you shortly</p>
-                </div>
-            ) : (
-                    <>
-                        {compose ? (
-                            <>
-                                <div className="compose-post-handler" onClick={() => changeCompose()}>
-                                    <h3>Compose a Post</h3>
-                                    <button style={{ "fontSize": "25px" }}>v</button>
+            <Spin spinning={loading}>
+                <Card title='Compose a Post' style={styles.cardForm} headStyle={{ fontSize: 25 }}>
+                    <div style={styles.postImageAndTextForm}>
+                        {images.length !== 0 ? (
+                            <div style={styles.uploadDiv}>
+                                <div style={styles.imageFill}>
+                                    <ImagePreview images={images} deleteImage={deleteImage} />
                                 </div>
-                                <div className="form-grid">
-                                    {images.length !== 0 ? (
-                                        <div className="fill">
-                                            <ImagePreview images={images} deleteImage={deleteImage} />
-                                        </div>
-                                    ) : (
-                                            <input type="file" className="fill" accept="image/*" multiple={true} onChange={handleFileUpload} />
-                                        )}
-                                    <div>
-                                        <textarea
-                                            type="textarea"
-                                            value={post}
-                                            onChange={handleChange}
-                                            placeholder="Start a new Post"
-                                        />
-                                    </div>
-                                    <div className="post-form-button-grid">
-                                        <PostFormModal post={post} images={images} handleChange={handleChange} newPost={newPost} deleteImage={deleteImage} handleFileUpload={handleFileUpload} setDate={setDate} date={date} />
-                                        <input type="submit" value="Submit" onClick={newPost} />
-                                    </div>
-                                    <div className='post-date'>
-                                        <label>Date</label>
-                                        <input
-                                            type='date'
-                                            value={date}
-                                            onChange={(e) => setDate(e.target.value)}
-                                        />
-                                        <button className='post-clear-date-button' onClick={() => setDate('')}>clear</button>
-                                    </div>
-                                </div>
-                            </>
+                            </div>
                         ) : (
-                                <div className="compose-post-handler-closed" onClick={() => changeCompose()}>
-                                    <h3>Compose a Post</h3>
-                                    <button style={{ transform: "rotate(180deg)", "fontSize": "25px" }}>v</button>
+                                <div style={styles.uploadDiv}>
+                                    <div style={styles.imageFill} >
+                                        <img src={placeholderImage} style={styles.placeholderImage} alt='placeholder' />
+                                    </div>
+                                    <input type="file" accept="image/*" ref={hiddenFileInput} style={{ display: 'none' }} multiple={true} onChange={handleFileUpload} />
+                                    <Button style={styles.imageUploadButton} icon={<UploadOutlined />} onClick={() => hiddenFileInput.current.click()}>Click to Upload</Button>
                                 </div>
                             )}
-
-                    </>
-                )}
+                        <TextArea style={styles.postTextArea} value={post} onChange={(e) => setPost(e.target.value)} placeholder="Start a new Post" />
+                    </div>
+                    <div style={styles.postDateAndUploadForm}>
+                        <div style={styles.dateDiv}>
+                            <Text style={{ color: 'rgb(245, 245, 245)', marginRight: 10 }}>Date</Text>
+                            <input style={styles.dateInput} type='date' value={date || today} onChange={(e) => setDate(e.target.value)} />
+                        </div>
+                        <Tooltip title={post.length === 0 ? ("Your post must have text") : ''}>
+                            <Button style={styles.submitButton} disabled={post.length === 0} onClick={submitPost}>Submit</Button>
+                        </Tooltip>
+                    </div>
+                </Card>
+            </Spin>
         </div>
     )
+}
+
+export default connect(null, { newPost })(PostForm)
+
+const styles = {
+    cardForm: {
+        margin: 35,
+        textAlign: 'center'
+    },
+    imageFill: {
+        padding: 10,
+        width: 280,
+        height: 240,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        border: '1.5px solid black',
+        borderRadius: 8
+    },
+    uploadDiv: {
+        display: 'block',
+    },
+    postTextArea: {
+        marginLeft: 25,
+        height: 240,
+        padding: 10,
+        resize: 'none',
+        fontSize: 15,
+        outline: 'none'
+    },
+    postImageAndTextForm: {
+        display: 'flex',
+        margin: 25
+    },
+    postDateAndUploadForm: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginRight: 50,
+        marginLeft: 50
+    },
+    dateDiv: {
+        padding: '5px 10px 5px 10px',
+        borderRadius: 8,
+        display: 'flex',
+        maxWidth: 350,
+        margin: 5,
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor: 'rgb(47, 88, 183)',
+    },
+    dateInput: {
+        borderRadius: 2,
+        border: 'none'
+    },
+    submitButton: {
+        height: 34,
+        border: 'none',
+        borderRadius: 8,
+        color: 'rgb( 245, 245, 245)',
+        backgroundColor: 'rgb(47, 88, 183)'
+    },
+    imageUploadButton: {
+        borderRadius: 8,
+        marginTop: 5
+    },
+    placeholderImage: {
+        maxWidth: 200,
+        maxHeight: 250,
+        width: 'auto',
+        height: 'auto'
+    }
 }

@@ -1,5 +1,6 @@
 import React from "react"
 import axios from "axios"
+import { Button } from 'antd'
 require("dotenv").config()
 
 export default class AddRecipient extends React.Component {
@@ -48,17 +49,27 @@ export default class AddRecipient extends React.Component {
     render() {
         return (
             <div>
-                <form className="new-recipient-form" onSubmit={this.submitRecipient}>
-                    <input
-                        type="email"
-                        placeholder="enter their email here"
-                        value={this.state.recipient}
-                        onChange={this.handleChange}
-                    />
-                    <input type="submit" value="+" />
-                    <span>add recipient</span>
-                </form>
+                <label style={styles.recipientLabel}>Recipient</label>
+                <input style={styles.emailInput} type="email" placeholder="email..." value={this.state.recipient} onChange={this.handleChange} />
+                {/* <Button style={styles.submitButton} onClick={this.submitRecipient}>Submit</Button> */}
             </div>
         )
+    }
+}
+
+const styles = {
+    submitButton: {
+        margin: '0 10px 0 10px'
+    },
+    emailInput: {
+        borderWidth: 1,
+        borderRadius: 8,
+        border: '1px solid #d9d9d9',
+        color: 'rgba(0, 0, 0, 0.85)',
+        outline: 'none',
+        padding: 4
+    },
+    recipientLabel: {
+        paddingRight: 10
     }
 }

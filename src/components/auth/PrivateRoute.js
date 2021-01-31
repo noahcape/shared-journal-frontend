@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react"
 import { Route, Redirect } from "react-router-dom"
 import isLoggedIn from "../../functions/isLoggedIn"
 
+
 const PrivateRoute = ({ component: Component, ...rest }) => {
     const [loggedIn, setLoggedIn] = useState()
 
@@ -24,12 +25,12 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
         loggedIn !== undefined ? <Route {...rest} render={props => (
             loggedIn ? (
                 <>
-                <Component {...props} />
+                    <Component {...props} />
                 </>
             ) : (
                     <Redirect to="/home" />
                 )
-        )} /> : <Redirect to= "/" />
+        )} /> : <Redirect to="/" />
     )
 }
 

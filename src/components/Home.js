@@ -1,47 +1,23 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { connect } from 'react-redux'
+import { Typography } from 'antd'
 import PostForm from "../components/PostForm";
-import UserContext from "../context/UserContext"
-import postAPI from "../API/posts.api"
 import PostEditHandler from "./PostEditHandler"
-import { Link } from "react-router-dom";
+import { getPosts } from '../store/actions/postActions'
+import { getPostsFromSelector, getDateOptions, getPostsBy } from "../store/selectors/postSelector";
+import { getUser, getJournalName } from "../store/selectors/userDataSelector";
 
-export default function Home() {
-    const { userData } = useContext(UserContext)
-    const [posts, setPosts] = useState();
-    const [dateOptions, setDateOptions] = useState({})
-    const [month, setMonth] = useState()
-    const [year, setYear] = useState()
-    const [reload, setReload] = useState(false)
+const { Title } = Typography
+
+const Home = ({ posts, dateOptions, user, journalName, getPosts }) => {
+    const [month, setMonth] = useState('')
+    const [year, setYear] = useState('')
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-
+    const [isMobile] = useState(window.innerWidth < 435);
 
     useEffect(() => {
-        let isCancelled = false;
-
-        const getDateOptions = async () => {
-            await postAPI.getDateOptions().then(res => {
-                if (!isCancelled) {
-                    setDateOptions(res.data)
-                }
-            })
-        }
-
-        const getPosts = async () => {
-            await postAPI.getPostsBy(month, year).then(res => {
-                if (!isCancelled) {
-                    setPosts(res.data)
-                }
-            })
-        }
-
-        getPosts();
-        getDateOptions();
-
-        return () => {
-            isCancelled = true;
-        };
-
-    }, [month, year, reload]);
+        getPosts()
+    }, [getPosts])
 
     const renderDateOptions = () => {
         return dateOptions && Object.keys(dateOptions).map((year, index) => {
@@ -55,54 +31,63 @@ export default function Home() {
         })
     }
 
+    const openVisitorPage = () => {
+        // const url = `https://sharedjournal.capefamily.org/visitor/${journalName.replace(" ", "_")}`;
+        const url = `http://localhost:3000/visitor/${journalName.replace(" ", "_")}`;
+        window.open(url, '_blank');
+    }
+
     const handleChange = (e) => {
         const vars = e.target.value.split(",")
 
         if (vars[0] === "undefined") {
-            setMonth(undefined)
-            setYear(undefined)
+            setMonth('')
+            setYear('')
         } else {
             setMonth(parseInt(vars[0]))
             setYear(parseInt(vars[1]))
         }
     }
 
-    const renderPosts = () => {
-        return posts && posts.map((post, index) => {
-            return <div key={index}>
-                <PostEditHandler post={post} setReload={setReload} reload={reload} />
+    const renderAllPosts = () => {
+        return posts.map((post, index) => {
+            return <div style={styles.postContainer} key={index}>
+                <PostEditHandler post={post} />
             </div>
+        })
+    }
 
-        });
-    };
+    const renderPostsFromDate = () => {
+        return getPostsBy(month, year).map((post, index) => {
+            return <div style={styles.postContainer} key={index}>
+                <PostEditHandler post={post} />
+            </div>
+        })
+    }
 
     return (
         <div>
-            <h1>
-                {userData.user && userData.user.journalName}
-            </h1>
-            <PostForm setReload={setReload} reload={reload} />
-            {posts && posts[0] ? (
+            <h1>{journalName}</h1>
+            <PostForm />
+            {posts ? (
                 <>
-                    <div className="user-options">
-                        <span>
+                    <div style={isMobile ? styles.userOptionsMobile : styles.userOptionsWeb}>
+                        <div style={styles.userOptionsDiv}>
                             See posts from
-                            <select onChange={(e) => handleChange(e)}>
+                            <select style={styles.dateOptions} onChange={(e) => handleChange(e)}>
                                 <option defaultValue={undefined + "," + undefined}>all</option>
                                 {renderDateOptions()}
                             </select>
-                        </span>
+                        </div>
 
-                        {userData.user && <Link to={`/visitor/${userData.user.journalName.replace(" ", "_")}`}>
-                            <span className="view-journal-as-visitor-button">View Journal as a visitor</span>
-                        </Link>}
+                        {user && <span style={styles.pageRedirect} onClick={openVisitorPage}>
+                            <div style={styles.userOptionsDiv}>View Journal as a visitor</div>
+                        </span>}
                     </div>
 
-                    <div className="home-post-title">{!year ? (<h1>All Posts</h1>) : (<h1>{`Posts from ${months[month]} ${year}`}</h1>)}</div>
+                    <div className="home-post-title">{!year ? (posts.length > 0 && <Title level={2}>Your Posts</Title>) : (<h1>{`Posts from ${months[month]} ${year}`}</h1>)}</div>
 
-                    <div className="grid-container">
-                        {renderPosts()}
-                    </div>
+                    {!month && !year ? renderAllPosts() : renderPostsFromDate()}
                 </>
             ) : (
                     <h1>You have not Posted. Compose one above ^</h1>
@@ -110,4 +95,53 @@ export default function Home() {
         </div>
 
     );
+}
+
+const mapStateToProps = () => ({
+    posts: getPostsFromSelector(),
+    dateOptions: getDateOptions(),
+    user: getUser(),
+    journalName: getJournalName()
+})
+
+export default connect(mapStateToProps, { getPosts })(Home)
+
+const styles = {
+    postContainer: {
+        paddingBottom: 10
+    },
+    userOptionsWeb: {
+        alignItems: 'center',
+        borderRadius: 8,
+        padding: 15,
+        margin: 8,
+        color: 'white',
+        backgroundColor: 'rgb(47, 88, 183)',
+        display: 'flex',
+        justifyContent: 'space-between',
+    },
+    userOptionsMobile: {
+        display: 'block',
+        borderRadius: 8,
+        padding: 15,
+        margin: 8,
+        color: 'white',
+        backgroundColor: 'rgb(47, 88, 183)',
+    },
+    dateOptions: {
+        marginLeft: 5,
+        color: 'white',
+        border: '3px solid white',
+        backgroundColor: 'rgb(129, 139, 249)'
+    },
+    userOptionsDiv: {
+        color: 'white',
+        padding: 8,
+        borderRadius: 8,
+        backgroundColor: 'rgb(129, 139, 249)',
+        margin: 5
+    },
+    pageRedirect: {
+        cursor: 'pointer'
+    }
 }

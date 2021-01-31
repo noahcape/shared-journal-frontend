@@ -1,9 +1,4 @@
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
 
 p, span {
     font-size: medium;
@@ -14,7 +9,7 @@ a {
     text-decoration: unset;
 }
 
-button, input[type="submit"] {
+input[type="submit"] {
     border: none;
     background: none;
     color: unset;
@@ -26,13 +21,13 @@ h1, h2, h3, h4, h5, h6 {
     padding-bottom: 0.2rem;
     padding-top: 0.5rem;
 }
-
+/* 
 img {
     max-width: 200px;
     max-height: 250px;
     width: auto;
     height: auto;
-}
+} */
 
 textarea[type="textarea"] {
     resize: none;
@@ -147,7 +142,7 @@ select:focus {
     justify-content: center;
 }
 
-input[type="file"] {
+/* input[type="file"] {
     padding: 100px;
     border: 1.5px solid black;
     border-radius: 8px;
@@ -159,7 +154,7 @@ input[type="file"] {
 
 input[type="file"]:focus {
     outline: none;
-}
+} */
 
 .page {
     margin: 0 auto;
@@ -170,39 +165,6 @@ input[type="file"]:focus {
 .container {
     margin: 0 auto;
     max-width: 900px;
-}
-
-/* nav bar */
-
-#header {
-    height: 50px;
-    align-items: center;
-    justify-content: space-between;
-    background-color: rgb(47, 88, 183);
-    display: flex;
-    margin-bottom: 20px;
-}
-
-#header .title {
-    margin: 0;
-    padding: 0 1rem;
-    color: #ffff;
-}
-
-#header .auth-options {
-    display: flex;
-    height: 100%;
-}
-
-#header .auth-options button {
-    padding: 0 1rem;
-    color: #ffff;
-    font-size: 1.1rem;
-    background-color: rgb(129, 139, 249);
-}
-
-#header .auth-options button:hover {
-    background-color: rgb(158, 166, 247);
 }
 
 /* log in and register form and page */
@@ -349,7 +311,6 @@ input[type="file"]:focus {
     display: grid;
     grid-template-columns: 1fr 50px 50px;
     padding-bottom: 10px;
-    border-bottom: 1px solid black;
 }
 
 .grid-item img {
@@ -413,7 +374,6 @@ input[type="file"]:focus {
     grid-template-columns: 1fr;
     padding-bottom: 15px;
     margin-bottom: 25px;
-    border-bottom: 1px black solid;
 }
 
 .post-edit-grid-no-images textarea {
@@ -425,7 +385,6 @@ input[type="file"]:focus {
     grid-template-columns: 1fr;
     padding-bottom: 15px;
     margin-bottom: 25px;
-    border-bottom: 1px black solid;
 }
 
 .post-edit-image-and-text {
@@ -510,7 +469,7 @@ input[type="file"]:focus {
     border-radius: 8px;
     width: 650px;
     height: 300px;
-    overflow-y:auto;
+    overflow-y: auto;
     margin-bottom: 15px;
 }
 

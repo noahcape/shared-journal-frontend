@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react"
 import { Route, Redirect } from "react-router-dom"
 import isLoggedIn from "../../functions/isLoggedIn"
 
+
 const PublicRoute = ({ component: Component, restricted, ...rest }) => {
     const [isAuthorized, setIsAuthorized] = useState()
 
+    
     useEffect(() => {
         let isCancelled = false;
 

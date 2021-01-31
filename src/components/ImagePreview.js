@@ -1,10 +1,12 @@
 import React from "react"
+import { DeleteOutlined } from "@ant-design/icons"
 
 class ImagePreview extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             images: this.props.images,
+            newImages: this.props.newImages,
             keys: this.props.post && this.props.post.image_keys,
             counter: 0,
         }
@@ -18,17 +20,11 @@ class ImagePreview extends React.Component {
     renderImage = () => {
         return (
             this.state.images.map((image, index) => {
-                let style = "image-scroll"
-
-                if (index === this.state.counter) {
-                    style += "-active"
-                }
-
                 return (
                     this.props.post ? (
-                        <img className={style} src={image} alt={image} key={index} />
+                        <img style={index === this.state.counter ? styles.imageScrollActive : styles.imageScroll} src={image} alt={image} key={index} />
                     ) : (
-                            <img className={style} src={URL.createObjectURL(image)} alt={image} key={index} />
+                            <img style={index === this.state.counter ? styles.imageScrollActive : styles.imageScroll} src={URL.createObjectURL(image)} alt={image} key={index} />
                         )
                 )
             })
@@ -78,7 +74,7 @@ class ImagePreview extends React.Component {
                 counter: 0
             })
 
-            this.props.deleteImage(this.state.images[i], this.state.keys[i], e)
+            this.props.deleteImage(this.state.images[i], this.state.keys[i], i)
 
             this.setState({ images: images, keys: keys })
 
@@ -91,7 +87,7 @@ class ImagePreview extends React.Component {
                 counter: 0
             })
 
-            this.props.deleteImage(this.state.images[i], undefined, e)
+            this.props.deleteImage(this.state.images[i], undefined)
 
             this.setState({ images: images })
         }
@@ -101,30 +97,70 @@ class ImagePreview extends React.Component {
     render() {
         return (
             this.state.images.length > 0 && <div>
-                {this.state.images.length > 1 ? (
-                    <div>
-                        {this.renderImage()}
-                        <p className="image-preview-controls">
-                            <button onClick={this.decrementCounter} style={{ float: "left" }}>{"<"}</button>
-                            <button onClick={(e) => this.handleDelete(this.state.counter, e)}>X</button>
-                            <button onClick={this.incrementCounter} style={{ float: "right" }}>{">"}</button>
-                        </p>
+                {/* {this.state.images.length > 1 ? ( */}
+                    <div style={styles.imageScrollControlsContainer}>
+                        <div style={styles.imageScrollContainer}>
+                            {this.state.images.length > 1 && <button onClick={this.decrementCounter} style={styles.imageScrollControls}>{"<"}</button>}
+                            {this.renderImage()}
+                            {this.state.images.length > 1 && <button onClick={this.incrementCounter} style={styles.imageScrollControls}>{">"}</button>}
+                        </div>
+                        <DeleteOutlined onClick={() => this.handleDelete(this.state.counter)} />
                     </div>
-                ) : (
-                        <div>
-                            {this.props.post ? (
-                                <img className="photo-edit-state" src={this.state.images[0]} alt={this.state.images[this.state.counter]} />
-                            ) : (
-                                    <img src={URL.createObjectURL(this.state.images[0])} alt={this.state.images[this.state.counter]} />
-                                )}
-                            <p className="image-preview-control">
-                                <button onClick={(e) => this.handleDelete(0, e)}>X</button>
-                            </p>
+                {/* ) : (
+                        <div style={styles.imageScrollControlsContainer}>
+                            <div style={styles.imageScrollContainer}>
+                                {this.props.post ? (
+                                    <img style={styles.image} src={this.state.images[0]} alt={this.state.images[this.state.counter]} />
+                                ) : (
+                                        <img src={URL.createObjectURL(this.state.images[0])} style={styles.image} alt={this.state.images[this.state.counter]} />
+                                    )}
+                            </div>
+                            <DeleteOutlined onClick={() => this.handleDelete(this.state.counter)} />
                         </div>
                     )
-                }
+                } */}
             </div>
         )
+    }
+}
+
+const styles = {
+    image: {
+        borderRadius: 4,
+        margin: '3px 15px 15px 15px',
+        maxWidth: 200,
+        maxHeight: 185,
+        width: 'auto',
+        height: 'auto',
+    },
+    imageScrollActive: {
+        position: 'relative',
+        borderRadius: 4,
+        margin: '3px 15px 15px 15px',
+        maxWidth: 200,
+        maxHeight: 185,
+        width: 'auto',
+        height: 'auto',
+
+    },
+    imageScroll: {
+        display: 'none',
+    },
+    imageScrollContainer: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between'
+    },
+    imageScrollControls: {
+        border: 'none',
+        backgroundColor: 'rgb(255, 255, 255)',
+        outline: 'none',
+        cursor: 'pointer',
+        padding: 0,
+        margin: 0
+    },
+    imageScrollControlsContainer: {
+        margin: '0 auto'
     }
 }
 

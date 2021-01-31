@@ -1,7 +1,8 @@
+
 // function to check if a user if logged in or not. 
 // returns boolean 
 
-import axios from "axios"
+import axios from 'axios'
 require("dotenv").config()
 
 const isLoggedIn = async () => {
@@ -12,14 +13,13 @@ const isLoggedIn = async () => {
         token = ""
     }
 
-    const tokenRes = await axios.post(
-        `https://${process.env.REACT_APP_SERVER}/users/tokenIsValid`,
-        null,
-        { headers: { "x-auth-token": token } }
-    )
-
-    return tokenRes.data
-
+    const res = await axios({
+        url: `${process.env.REACT_APP_BACKEND}/api/users/isTokenValid`,
+        method: 'POST',
+        headers: { "x-auth-token": token }
+    })
+    
+    return res.data
 }
 
-export default isLoggedIn;
+export default isLoggedIn
