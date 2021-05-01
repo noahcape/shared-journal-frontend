@@ -18,6 +18,7 @@ import PublicView from "./components/PublicView"
 import PublicHome from "./components/PublicHome"
 import logo from "./favicon.ico"
 import { getJournalName } from './store/selectors/userDataSelector';
+import Unsubscribe from './components/Unsubscribe';
 require("dotenv").config()
 
 const { Content, Footer } = Layout
@@ -55,6 +56,7 @@ const App = ({ getPosts, getSettings, getUser, journalName }) => {
             <Content style={!isMobile ? ({ margin: '0 150px' }) : ({ margin: 0 })}>
               <div style={isMobile ? styles.applicationLayoutContentMobile : styles.applicationLayoutContentWeb}>
                 <Switch>
+                  <Route path='/unsubscribe/:journalName' component={Unsubscribe} />
                   <PrivateRoute path="/user_settings" component={UserSettings} />
                   <Route path="/home" component={PublicHome} />
                   <Route path="/visitor/:journalName" component={PublicView} />

@@ -5,6 +5,10 @@ import axios from 'axios'
 import * as dotenv from 'dotenv'
 dotenv.config()
 
+export const unsubscribeUser = (journal_name: string, email: string) => async () => {
+    return axios.put(`${process.env.REACT_APP_BACKEND}/api/settings/unsubscribe?journal_name=${journal_name}&email=${email}`)
+}
+
 export const newSettings = (data: any) => async (dispatch: Dispatch<SettingsDispatchTypes>) => {
     try {
         dispatch({
